@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Diagnóstico Recordatorios</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .evento { background: #f9f9f9; padding: 10px; margin: 5px 0; }
+        .inscripcion { background: #f0f8ff; padding: 8px; margin: 3px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Diagnóstico del Sistema de Recordatorios</h1>
+    
+    <div class="section">
+        <h2>Eventos Próximos (24h)</h2>
+        {% for evento in eventos_24h %}
+        <div class="evento">
+            <strong>{{ evento.NOMBRE }}</strong> - 
+            {{ evento.FECHA_HORA }} - 
+            Estado: {{ evento.ESTADO }}
+        </div>
+        {% else %}
+        <p>No hay eventos en las próximas 24 horas</p>
+        {% endfor %}
+    </div>
+    
+    <div class="section">
+        <h2>Eventos Próximos (48h)</h2>
+        {% for evento in eventos_48h %}
+        <div class="evento">
+            <strong>{{ evento.NOMBRE }}</strong> - 
+            {{ evento.FECHA_HORA }} - 
+            Estado: {{ evento.ESTADO }}
+        </div>
+        {% else %}
+        <p>No hay eventos en las próximas 48 horas</p>
+        {% endfor %}
+    </div>
+    
+    <div class="section">
+        <h2>Todas las Inscripciones</h2>
+        {% for ins in todas_inscripciones %}
+        <div class="inscripcion">
+            Evento: <strong>{{ ins.evento_nombre }}</strong> - 
+            Usuario: {{ ins.usuario_nombre }} ({{ ins.CORREO }}) - 
+            Fecha: {{ ins.FECHA_HORA }}
+        </div>
+        {% else %}
+        <p>No hay inscripciones en el sistema</p>
+        {% endfor %}
+    </div>
+    
+    <div class="section">
+        <h2>Recordatorios Enviados</h2>
+        {% for rec in recordatorios %}
+        <div class="inscripcion">
+            ID: {{ rec.ID_RECORDATORIO }} - 
+            Evento: {{ rec.ID_RESERVA }} - 
+            Usuario: {{ rec.ID_USUARIO }} - 
+            Fecha: {{ rec.FECHA_ENVIO }}
+        </div>
+        {% else %}
+        <p>No se han enviado recordatorios</p>
+        {% endfor %}
+    </div>
+    
+    <a href="{{ url_for('listar_eventos') }}">← Volver a eventos</a>
+</body>
+</html>

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteos de Parqueaderos - Conjunto Alameda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='sorteos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #0056b3;
+            --light-blue: #4a86e8;
+            --dark-blue: #003a75;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --light-gray: #f8f9fa;
+            --white: #ffffff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .sorteo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .header-section p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stats-panel {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 25px 40px;
+            background: var(--light-gray);
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid var(--primary-blue);
+        }
+        
+        .stat-card.car {
+            border-top-color: #007bff;
+        }
+        
+        .stat-card.moto {
+            border-top-color: #ffc107;
+        }
+        
+        .stat-card.bici {
+            border-top-color: #28a745;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .stat-card.car .stat-icon { color: #007bff; }
+        .stat-card.moto .stat-icon { color: #ffc107; }
+        .stat-card.bici .stat-icon { color: #28a745; }
+        
+        .stat-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-blue);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-detail {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-top: 5px;
+        }
+        
+        .actions-section {
+            padding: 30px 40px;
+            background: var(--white);
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .actions-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .sorteo-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        
+        .btn-sorteo {
+            padding: 25px 20px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        
+        .btn-carro {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .btn-moto {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+        
+        .btn-bicicleta {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--gray);
+            color: white;
+            grid-column: span 3;
+        }
+        
+        .btn-sorteo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-sorteo i {
+            font-size: 2.5rem;
+        }
+        
+        .table-section {
+            padding: 30px 40px;
+        }
+        
+        .table-section h2 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tabla-sorteos {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--white);
+        }
+        
+        .tabla-sorteos thead {
+            background: linear-gradient(135deg, var(--primary-blue), var(--light-blue));
+            color: white;
+        }
+        
+        .tabla-sorteos th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        
+        .tabla-sorteos tbody tr {
+            border-bottom: 1px solid #eee;
+            transition: background 0.3s ease;
+        }
+        
+        .tabla-sorteos tbody tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .tabla-sorteos td {
+            padding: 18px 15px;
+            vertical-align: middle;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .badge-ganador {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge-espera {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .icon-vehiculo {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
+        .btn-action {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin: 2px;
+        }
+        
+        .btn-assign {
+            background: var(--info);
+            color: white;
+        }
+        
+        .btn-view {
+            background: var(--gray);
+            color: white;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+        
+        .no-data i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ddd;
+        }
+        
+        .no-data h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--dark-blue);
+        }
+        
+        .no-data p {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .mensaje {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 40px;
+            font-weight: 500;
+        }
+        
+        .mensaje.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .mensaje.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .mensaje.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        @media (max-width: 992px) {
+            .sorteo-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .btn-secondary {
+                grid-column: span 1;
+            }
+            
+            .stats-panel {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .header-section, 
+            .stats-panel,
+            .actions-section,
+            .table-section {
+                padding: 20px;
+            }
+            
+            .tabla-sorteos {
+                font-size: 0.9rem;
+            }
+            
+            .tabla-sorteos th,
+            .tabla-sorteos td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sorteo-container">
+        <!-- Header -->
+        <div class="header-section">
+            <h1>
+                <i class="fas fa-ticket-alt"></i>
+                Sorteos de Parqueaderos
+            </h1>
+            <p>Sistema de asignación justa de parqueaderos para residentes con vehículos aprobados</p>
+        </div>
+        
+        <!-- Mensajes Flash -->
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        
+        <!-- Panel de Estadísticas -->
+        <div class="stats-panel">
+            <div class="stat-card car">
+                <i class="fas fa-car stat-icon"></i>
+                <div class="stat-title">Vehículos Aprobados</div>
+                <div class="stat-value">{{ estadisticas.CARRO.aprobados }}</div>
+                <div class="stat-detail">
+                    Cupos: {{ cupos.CARRO }} | Disponibles: {{ estadisticas.CARRO.disponible }}
+                    {% if estadisticas.CARRO.suficientes %}
+                        <br><span style="color: #28a745;">✅ Suficientes para sorteo</span>
+                    {% else %}
+                        <br><span style="color: #ffc107;">⚠️ Necesita más aprobaciones</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="stat-card moto">
+                <i class="fas fa-motorcycle stat-icon"></i>
+                <div class="stat-title">Vehículos Aprobados</div>
+                <div class="stat-value">{{ estadisticas.MOTO.aprobados }}</div>
+                <div class="stat-detail">
+                    Cupos: {{ cupos.MOTO }} | Disponibles: {{ estadisticas.MOTO.disponible }}
+                    {% if estadisticas.MOTO.suficientes %}
+                        <br><span style="color: #28a745;">✅ Suficientes para sorteo</span>
+                    {% else %}
+                        <br><span style="color: #ffc107;">⚠️ Necesita más aprobaciones</span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="stat-card bici">
+                <i class="fas fa-bicycle stat-icon"></i>
+                <div class="stat-title">Vehículos Aprobados</div>
+                <div class="stat-value">{{ estadisticas.BICICLETA.aprobados }}</div>
+                <div class="stat-detail">
+                    Cupos: {{ cupos.BICICLETA }} | Disponibles: {{ estadisticas.BICICLETA.disponible }}
+                    {% if estadisticas.BICICLETA.suficientes %}
+                        <br><span style="color: #28a745;">✅ Suficientes para sorteo</span>
+                    {% else %}
+                        <br><span style="color: #ffc107;">⚠️ Necesita más aprobaciones</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Acciones de Sorteo -->
+        <div class="actions-section">
+            <h2><i class="fas fa-random"></i> Realizar Nuevo Sorteo</h2>
+            <div class="sorteo-actions">
+                <a href="{{ url_for('crear_sorteo', tipo='CARRO') }}" class="btn-sorteo btn-carro">
+                    <i class="fas fa-car"></i>
+                    <span>Sorteo Carros</span>
+                    <small>{{ estadisticas.CARRO.aprobados }} aprobados / {{ cupos.CARRO }} cupos</small>
+                </a>
+                
+                <a href="{{ url_for('crear_sorteo', tipo='MOTO') }}" class="btn-sorteo btn-moto">
+                    <i class="fas fa-motorcycle"></i>
+                    <span>Sorteo Motos</span>
+                    <small>{{ estadisticas.MOTO.aprobados }} aprobados / {{ cupos.MOTO }} cupos</small>
+                </a>
+                
+                <a href="{{ url_for('crear_sorteo', tipo='BICICLETA') }}" class="btn-sorteo btn-bicicleta">
+                    <i class="fas fa-bicycle"></i>
+                    <span>Sorteo Bicicletas</span>
+                    <small>{{ estadisticas.BICICLETA.aprobados }} aprobados / {{ cupos.BICICLETA }} cupos</small>
+                </a>
+                
+                <a href="{{ url_for('estadisticas_sorteos') }}" class="btn-sorteo btn-secondary">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Ver Estadísticas Detalladas</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Tabla de Sorteos -->
+        <div class="table-section">
+            <h2><i class="fas fa-list"></i> Historial de Sorteos</h2>
+            
+            {% if sorteos %}
+            <div class="table-responsive">
+                <table class="tabla-sorteos">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tipo de Vehículo</th>
+                            <th>Residente</th>
+                            <th>Ubicación</th>
+                            <th>Resultado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sorteo in sorteos %}
+                        <tr>
+                            <td>
+                                <strong>{{ sorteo.FECHA.strftime('%d/%m/%Y') }}</strong><br>
+                                <small>{{ sorteo.FECHA.strftime('%H:%M') }}</small>
+                            </td>
+                            <td>
+                                {% if sorteo.TIPO == 'CARRO' %}
+                                <i class="fas fa-car icon-vehiculo" style="color: #007bff;"></i> Carro
+                                {% elif sorteo.TIPO == 'MOTO' %}
+                                <i class="fas fa-motorcycle icon-vehiculo" style="color: #ffc107;"></i> Moto
+                                {% else %}
+                                <i class="fas fa-bicycle icon-vehiculo" style="color: #28a745;"></i> Bicicleta
+                                {% endif %}
+                            </td>
+                            <td>
+                                <strong>{{ sorteo.usuario.NOMBRE }} {{ sorteo.usuario.APELLIDO }}</strong><br>
+                                <small>{{ sorteo.usuario.CORREO }}</small>
+                            </td>
+                            <td>
+                                Torre {{ sorteo.usuario.TORRE or 'N/A' }}<br>
+                                Apto {{ sorteo.usuario.APARTAMENTO or 'N/A' }}
+                            </td>
+                            <td>
+                                {% if sorteo.RESULTADO == 'GANADOR' %}
+                                <span class="badge badge-ganador">
+                                    <i class="fas fa-trophy"></i> Ganador
+                                </span>
+                                {% else %}
+                                <span class="badge badge-espera">
+                                    <i class="fas fa-clock"></i> En Espera
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                    {% if sorteo.RESULTADO == 'GANADOR' %}
+                                    <a href="{{ url_for('asignar_parqueaderos', id_sorteo=sorteo.ID_SORTEO) }}" 
+                                       class="btn-action btn-assign" title="Asignar Parqueadero">
+                                        <i class="fas fa-parking"></i> Asignar
+                                    </a>
+                                    {% endif %}
+                                    
+                                    <button class="btn-action btn-view" 
+                                            onclick="verDetalle('{{ sorteo.ID_SORTEO }}')">
+                                            title="Ver Detalles">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-data">
+                <i class="fas fa-clipboard-list"></i>
+                <h3>No se han realizado sorteos aún</h3>
+                <p>Realice un sorteo para asignar parqueaderos a los residentes con vehículos aprobados.</p>
+                <div style="margin-top: 30px;">
+                    <a href="{{ url_for('listar_vehiculos') }}" class="btn-action btn-assign" style="padding: 12px 25px;">
+                        <i class="fas fa-car"></i> Ver Vehículos Pendientes
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        function verDetalle(idSorteo) {
+            // Aquí puedes implementar un modal o redirección
+            alert('Detalle del sorteo #' + idSorteo + '\n\nFuncionalidad en desarrollo. Se implementará un modal para mostrar más información.');
+        }
+        
+        // Efectos visuales
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación para las tarjetas de estadísticas
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 200));
+            });
+            
+            // Animación para botones de sorteo
+            const sorteoButtons = document.querySelectorAll('.btn-sorteo');
+            sorteoButtons.forEach((btn, index) => {
+                btn.style.opacity = '0';
+                btn.style.transform = 'scale(0.9)';
+                
+                setTimeout(() => {
+                    btn.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    btn.style.opacity = '1';
+                    btn.style.transform = 'scale(1)';
+                }, 300 + (index * 100));
+            });
+        });
+    </script>
+</body>
+</html>

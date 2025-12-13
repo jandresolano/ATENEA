@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Paquetes - Portero</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='panel_portero.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="portero-container">
+        <div class="portero-header">
+            <div class="portero-welcome-section">
+                <h1>Lista de Paquetes</h1>
+                <p>Conjunto Residencial Alameda el Porvenir Etapa II</p>
+            </div>
+            <div class="portero-user-menu">
+                <a href="{{ url_for('portero.panel_portero') }}" class="portero-btn portero-btn-primary">
+                    <i class="fas fa-arrow-left"></i> Volver al Panel
+                </a>
+            </div>
+        </div>
+
+        <!-- Filtros -->
+        <div class="portero-section-box">
+            <h2>Filtrar Paquetes</h2>
+            <div class="portero-quick-actions">
+                <a href="{{ url_for('portero.listar_paquetes') }}?estado=all" 
+                   class="portero-btn {% if estado_actual == 'all' %}portero-btn-primary{% else %}portero-btn-logout{% endif %}">
+                    Todos ({{ total_paquetes }})
+                </a>
+                <a href="{{ url_for('portero.listar_paquetes') }}?estado=recibido" 
+                   class="portero-btn {% if estado_actual == 'recibido' %}portero-btn-warning{% else %}portero-btn-logout{% endif %}">
+                    Pendientes ({{ paquetes_recibidos }})
+                </a>
+                <a href="{{ url_for('portero.listar_paquetes') }}?estado=notificado" 
+                   class="portero-btn {% if estado_actual == 'notificado' %}portero-btn-primary{% else %}portero-btn-logout{% endif %}">
+                    Notificados ({{ paquetes_notificados }})
+                </a>
+                <a href="{{ url_for('portero.listar_paquetes') }}?estado=entregado" 
+                   class="portero-btn {% if estado_actual == 'entregado' %}portero-btn-success{% else %}portero-btn-logout{% endif %}">
+                    Entregados ({{ paquetes_entregados }})
+                </a>
+            </div>
+        </div>
+
+        <!-- Tabla de Paquetes -->
+        <div class="portero-table-container">
+            <h2>Paquetes {% if estado_actual != 'all' %}{{ estado_actual|title }}{% endif %}</h2>
+            
+            {% if paquetes %}
+            <table class="portero-packages-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Torre/Apto</th>
+                        <th>Descripción</th>
+                        <th>Remitente</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Estado</th>
+                        <th>Notificaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paquete in paquetes %}
+                    <tr>
+                        <td>{{ paquete.id }}</td>
+                        <td><strong>{{ paquete.torre }}-{{ paquete.apartamento }}</strong></td>
+                        <td>{{ paquete.descripcion }}</td>
+                        <td>{{ paquete.remitente or 'N/A' }}</td>
+                        <td>{{ paquete.fecha_ingreso.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            <span class="portero-status-badge portero-status-{{ paquete.estado }}">
+                                {{ paquete.estado|title }}
+                            </span>
+                        </td>
+                        <td>
+                            {% if paquete.notificado_correo %}
+                                <i class="fas fa-envelope" title="Notificado por correo" style="color: var(--success);"></i>
+                            {% endif %}
+                            {% if paquete.notificado_whatsapp %}
+                                <i class="fab fa-whatsapp" title="Notificado por WhatsApp" style="color: #25D366;"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                                {% if paquete.estado != 'entregado' %}
+                                <a href="{{ url_for('portero.notificar_paquete', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-primary" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Enviar notificación de este paquete?')">
+                                    <i class="fas fa-bell"></i> Notificar
+                                </a>
+                                <a href="{{ url_for('portero.marcar_entregado', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-success" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Marcar este paquete como entregado?')">
+                                    <i class="fas fa-check"></i> Entregado
+                                </a>
+                                {% else %}
+                                <span class="portero-btn" style="padding: 5px 10px; font-size: 0.8rem; background: var(--disabled); color: white;">
+                                    <i class="fas fa-check-double"></i> Entregado
+                                </span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-box-open" style="font-size: 3rem; color: var(--disabled); margin-bottom: 15px;"></i>
+                <p style="color: var(--disabled); font-size: 1.1rem;">
+                    No hay paquetes {% if estado_actual != 'all' %}{{ estado_actual }}{% endif %} registrados.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Vehículo - Alameda</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='panel_residente.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #4a86e8, #0056b3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .form-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #0056b3;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .file-input {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+    }
+    .file-input:hover {
+      background: #e9ecef;
+      border-color: #0056b3;
+    }
+    .file-input input[type="file"] {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .file-input small {
+      display: block;
+      color: #6c757d;
+      font-size: 0.8rem;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 8px;
+      background: #0056b3;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 1rem;
+    }
+    .btn:hover { 
+      background: #003a75; 
+      transform: translateY(-2px);
+    }
+    .back-link {
+      text-align: center;
+      display: block;
+      margin-top: 20px;
+      color: #0056b3;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back-link:hover { 
+      text-decoration: underline; 
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .requerido {
+      color: #dc3545;
+    }
+    .info-box {
+      background: #d1ecf1;
+      border: 1px solid #bee5eb;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 0.9rem;
+    }
+    .file-preview {
+      margin-top: 5px;
+      font-size: 0.85rem;
+      color: #28a745;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2><i class="fas fa-car"></i> Registrar Vehículo</h2>
+    
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i> 
+      <strong>Información importante:</strong><br>
+      • Todos los documentos son obligatorios<br>
+      • Formatos aceptados: PDF, PNG, JPG, JPEG<br>
+      • Tamaño máximo por archivo: 16MB<br>
+      • El vehículo quedará en estado "PENDIENTE" hasta su aprobación
+    </div>
+    
+    <form action="{{ url_for('crear_vehiculo') }}" method="POST" enctype="multipart/form-data">
+      <!-- Datos básicos del vehículo -->
+      <label for="placa">Placa del vehículo: <span class="requerido">*</span></label>
+      <input type="text" name="placa" id="placa" maxlength="10" required 
+             placeholder="Ej: ABC123" oninput="this.value = this.value.toUpperCase()">
+
+      <label for="tipo">Tipo de vehículo: <span class="requerido">*</span></label>
+      <select name="tipo" id="tipo" required>
+        <option value="">Seleccione el tipo...</option>
+        <option value="CARRO">Carro</option>
+        <option value="MOTO">Moto</option>
+        <option value="BICICLETA">Bicicleta</option>
+      </select>
+
+      <!-- Documentos requeridos -->
+      <label for="soat">SOAT vigente: <span class="requerido">*</span></label>
+      <div class="file-input">
+        <input type="file" name="soat" id="soat" accept=".pdf,.png,.jpg,.jpeg" required>
+        <small>Documento que acredite el SOAT vigente del vehículo</small>
+        <div class="file-preview" id="soat-preview"></div>
+      </div>
+
+      <label for="identidad">Documento de identidad: <span class="requerido">*</span></label>
+      <div class="file-input">
+        <input type="file" name="identidad" id="identidad" accept=".pdf,.png,.jpg,.jpeg" required>
+        <small>Cédula de ciudadanía o documento de identificación</small>
+        <div class="file-preview" id="identidad-preview"></div>
+      </div>
+
+      <label for="tarjeta_propiedad">Tarjeta de propiedad: <span class="requerido">*</span></label>
+      <div class="file-input">
+        <input type="file" name="tarjeta_propiedad" id="tarjeta_propiedad" accept=".pdf,.png,.jpg,.jpeg" required>
+        <small>Documento que acredite la propiedad del vehículo</small>
+        <div class="file-preview" id="tarjeta-preview"></div>
+      </div>
+
+      <button type="submit" class="btn">
+        <i class="fas fa-save"></i> Registrar Vehículo
+      </button>
+    </form>
+    
+    <a href="{{ url_for('listar_vehiculos') }}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Volver a Mis Vehículos
+    </a>
+  </div>
+
+  <script>
+    // Convertir placa a mayúsculas automáticamente
+    document.getElementById('placa').addEventListener('input', function(e) {
+      this.value = this.value.toUpperCase();
+    });
+
+    // Mostrar preview de archivos seleccionados
+    function setupFilePreview(inputId, previewId) {
+      const input = document.getElementById(inputId);
+      const preview = document.getElementById(previewId);
+      
+      input.addEventListener('change', function(e) {
+        if (this.files.length > 0) {
+          const file = this.files[0];
+          const fileSize = (file.size / (1024 * 1024)).toFixed(2); // MB
+          preview.innerHTML = `✓ ${file.name} (${fileSize} MB)`;
+          preview.style.color = '#28a745';
+        } else {
+          preview.innerHTML = '';
+        }
+      });
+    }
+
+    // Configurar preview para todos los campos de archivo
+    setupFilePreview('soat', 'soat-preview');
+    setupFilePreview('identidad', 'identidad-preview');
+    setupFilePreview('tarjeta_propiedad', 'tarjeta-preview');
+
+    // Validar tamaño de archivo antes de enviar
+    document.querySelector('form').addEventListener('submit', function(e) {
+      const fileInputs = document.querySelectorAll('input[type="file"]');
+      const maxSize = 16 * 1024 * 1024; // 16MB
+      let hasError = false;
+      
+      fileInputs.forEach(input => {
+        if (input.files.length > 0) {
+          const file = input.files[0];
+          if (file.size > maxSize) {
+            e.preventDefault();
+            alert(`❌ El archivo "${file.name}" es demasiado grande.\n\nTamaño actual: ${(file.size / (1024 * 1024)).toFixed(2)} MB\nMáximo permitido: 16 MB`);
+            input.focus();
+            hasError = true;
+            return;
+          }
+        }
+      });
+
+      // Validar que todos los campos estén completos
+      const placa = document.getElementById('placa').value.trim();
+      const tipo = document.getElementById('tipo').value;
+      
+      if (!placa || !tipo) {
+        e.preventDefault();
+        alert('❌ Por favor complete todos los campos obligatorios');
+        hasError = true;
+      }
+
+      if (!hasError) {
+        // Mostrar mensaje de carga
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+        btn.disabled = true;
+      }
+    });
+
+    // Mejorar la experiencia de arrastrar y soltar
+    document.querySelectorAll('.file-input').forEach(container => {
+      container.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.background = '#e3f2fd';
+        this.style.borderColor = '#0056b3';
+      });
+      
+      container.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.style.background = '#f8f9fa';
+        this.style.borderColor = '#dee2e6';
+      });
+      
+      container.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.background = '#f8f9fa';
+        this.style.borderColor = '#dee2e6';
+        
+        const input = this.querySelector('input[type="file"]');
+        if (e.dataTransfer.files.length > 0) {
+          input.files = e.dataTransfer.files;
+          input.dispatchEvent(new Event('change'));
+        }
+      });
+    });
+  </script>
+</body>
+</html>

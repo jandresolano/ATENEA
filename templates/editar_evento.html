@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Evento - Atenea</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editar_evento.css') }}">
+</head>
+<body class="bg-light">
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="logo">
+                <i class="fas fa-home"></i> Alameda del Porvenir II
+            </div>
+            <nav>
+                <a href="{{ url_for('inicio') }}">Inicio</a>
+                <a href="{{ url_for('listar_eventos') }}">Eventos</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <!-- Encabezado con icono -->
+                <div class="text-center mb-4">
+                    <div class="header-icon">
+                        <i class="fas fa-calendar-edit"></i>
+                    </div>
+                    <h2 class="text-primary mb-2">Editar Evento</h2>
+                    <p class="text-muted">Actualiza la información del evento según sea necesario</p>
+                </div>
+
+                <!-- Formulario -->
+                <form method="POST" class="card shadow-sm p-4 form-container">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Nombre del evento</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-heading"></i></span>
+                            <input type="text" class="form-control" name="nombre" value="{{ evento.NOMBRE }}" required>
+                        </div>
+                        <div class="form-text">Ingresa un nombre claro y descriptivo para el evento.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Descripción</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                            <textarea class="form-control" name="descripcion" rows="4" required>{{ evento.DESCRIPCION }}</textarea>
+                        </div>
+                        <div class="form-text">Proporciona detalles importantes sobre el evento.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Fecha y hora</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            <input type="datetime-local" class="form-control" name="fecha_hora"
+                                   value="{{ evento.FECHA_HORA.strftime('%Y-%m-%dT%H:%M') }}" required>
+                        </div>
+                        <div class="form-text">Selecciona la fecha y hora en que se realizará el evento.</div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Estado</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-info-circle"></i></span>
+                            <select class="form-select" name="estado">
+                                <option value="ACTIVO" {% if evento.ESTADO == 'ACTIVO' %}selected{% endif %}>Activo</option>
+                                <option value="CANCELADO" {% if evento.ESTADO == 'CANCELADO' %}selected{% endif %}>Cancelado</option>
+                                <option value="FINALIZADO" {% if evento.ESTADO == 'FINALIZADO' %}selected{% endif %}>Finalizado</option>
+                            </select>
+                        </div>
+                        <div class="form-text">Define el estado actual del evento.</div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <a href="{{ url_for('listar_eventos') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Volver a Eventos
+                        </a>
+                        <div>
+                            <a href="{{ url_for('listar_eventos') }}" class="btn btn-secondary me-2">Cancelar</a>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-save me-2"></i>Guardar Cambios
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Información adicional -->
+                <div class="mt-4 text-center">
+                    <div class="alert alert-info" role="alert">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Los cambios se reflejarán inmediatamente en el calendario de eventos.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5">
+        <div class="container text-center py-3">
+            <p class="mb-0">© 2025 Conjunto Residencial Alameda del Porvenir II - Todos los derechos reservados</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

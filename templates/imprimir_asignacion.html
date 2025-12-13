@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignación de Parqueaderos - Sorteo {{ sorteo.TIPO }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <style>
+        @media print {
+            body { margin: 0; padding: 20px; }
+            .no-print { display: none; }
+            .print-only { display: block; }
+            .asignacion-table { page-break-inside: avoid; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #0056b3;
+            padding-bottom: 15px;
+        }
+        
+        .asignacion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .asignacion-table th {
+            background: #0056b3;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        .asignacion-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .asignacion-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+        
+        .btn {
+            padding: 10px 15px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: #0056b3;
+            color: white;
+        }
+        
+        .action-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Asignación de Parqueaderos - Sorteo {{ sorteo.TIPO }}</h1>
+            <p><strong>Fecha del Sorteo:</strong> {{ sorteo.FECHA.strftime('%d/%m/%Y %H:%M') }}</p>
+            <p><strong>Fecha de Impresión:</strong> {{ fecha }}</p>
+            <p><strong>Total Asignaciones:</strong> {{ asignaciones|length }}</p>
+        </div>
+        
+        <table class="asignacion-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Parqueadero</th>
+                    <th>Residente</th>
+                    <th>Apartamento</th>
+                    <th>Torre</th>
+                    <th>Vehículo</th>
+                    <th>Contacto</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asignacion in asignaciones %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td><strong>{{ asignacion.parqueadero }}</strong></td>
+                    <td>{{ asignacion.residente.NOMBRE }} {{ asignacion.residente.APELLIDO }}</td>
+                    <td>{{ asignacion.residente.APARTAMENTO or 'N/A' }}</td>
+                    <td>{{ asignacion.residente.TORRE or 'N/A' }}</td>
+                    <td>
+                        {% if asignacion.vehiculo %}
+                            {{ asignacion.vehiculo.PLACA or 'Sin placa' }}
+                        {% else %}
+                            No registrado
+                        {% endif %}
+                    </td>
+                    <td>{{ asignacion.residente.TELEFONO or 'N/A' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="footer">
+            <p><strong>Conjunto Residencial Alameda el Porvenir Etapa II</strong></p>
+            <p>Sistema de Administración - © 2025</p>
+        </div>
+        
+        <div class="action-buttons no-print">
+            <button onclick="window.print()" class="btn btn-primary">
+                🖨️ Imprimir Asignación
+            </button>
+            <a href="{{ url_for('asignar_parqueaderos', id_sorteo=sorteo.ID_SORTEO) }}" class="btn">
+                ↩️ Volver a Asignación
+            </a>
+        </div>
+    </div>
+    
+    <script>
+        // Auto-print cuando se carga la página
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 1000);
+        };
+    </script>
+</body>
+</html>

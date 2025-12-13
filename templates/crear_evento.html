@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Evento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            padding: 30px;
+            width: 400px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #1E3A8A;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin: 10px 0 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .btn, .btn-cancelar {
+            display: inline-block;
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 16px;
+            border: none;
+            transition: 0.3s;
+        }
+
+        .btn {
+            background-color: #1E3A8A;
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #16336b;
+        }
+
+        .btn-cancelar {
+            background-color: #F5F5DC;
+            color: #1E3A8A;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #e2e2c7;
+        }
+
+        .acciones {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Crear Nuevo Evento</h2>
+        <form method="POST">
+            <label for="nombre">Nombre del evento:</label>
+            <input type="text" name="nombre" required>
+
+            <label for="descripcion">Descripción:</label>
+            <textarea name="descripcion"></textarea>
+
+            <label for="fecha_hora">Fecha y hora:</label>
+            <input type="datetime-local" name="fecha_hora" required>
+
+            <div class="acciones">
+                <button type="submit" class="btn">Crear Evento</button>
+                <a href="{{ url_for('listar_eventos') }}" class="btn-cancelar">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

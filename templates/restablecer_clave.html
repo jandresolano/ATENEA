@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restablecer Contraseña - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <style>
+        .password-container {
+            position: relative;
+        }
+        .toggle-password {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Restablecer Contraseña</h2>
+        
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="password-container">
+                <input type="password" name="nueva_clave" id="nueva_clave" placeholder="Nueva contraseña" required minlength="6">
+                <button type="button" class="toggle-password" onclick="togglePassword('nueva_clave')">👁️</button>
+            </div>
+            
+            <div class="password-container">
+                <input type="password" name="confirmar_clave" id="confirmar_clave" placeholder="Confirmar contraseña" required minlength="6">
+                <button type="button" class="toggle-password" onclick="togglePassword('confirmar_clave')">👁️</button>
+            </div>
+            
+            <button type="submit">Restablecer contraseña</button>
+        </form>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+            } else {
+                input.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>

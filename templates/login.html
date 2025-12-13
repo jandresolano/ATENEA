@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+    <!-- Agregar Font Awesome para los íconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Conjunto Residencial</h1>
+            <p>Alameda el porvenir etapa II</p>
+        </div>
+        
+        <h2>Iniciar Sesión</h2>
+        
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if not db_connected %}
+            <div class="mensaje error">
+                Advertencia: No se pudo conectar a la base de datos. Verifica que MySQL esté ejecutándose.
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            <input type="text" name="usuario" placeholder="Correo electrónico" required>
+            
+            <div class="password-container">
+                <input type="password" name="password" id="password" placeholder="Contraseña" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('password')" aria-label="Mostrar/Ocultar contraseña">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            
+            <button type="submit">Entrar</button>
+        </form>
+
+        <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+            <p><a href="{{ url_for('recuperar_clave') }}" style="color: #0056b3;">¿Olvidaste tu contraseña?</a></p>
+        </div>
+        
+        <div style="margin-top: 20px; font-size: 14px; color: #666;">
+            <p>¿Problemas para acceder? Contacte al administrador.</p>
+        </div>
+        <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+            <p>¿Nuevo residente? <a href="{{ url_for('registro_residente') }}" style="color: #0056b3;">Regístrese aquí</a></p>
+        </div>
+    </div>  
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentNode.querySelector('.toggle-password i');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+    </script>
+</body>
+</html>

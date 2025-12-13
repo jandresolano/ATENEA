@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Revisión de Vehículos - Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .vehiculo-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid #0056b3;
+        }
+        .documentos-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .documento-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin: 5px;
+        }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-primary { background: #0056b3; color: white; }
+        .estado-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        .estado-pendiente { background: #ffc107; color: black; }
+        .estado-aprobado { background: #28a745; color: white; }
+        .estado-rechazado { background: #dc3545; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-car"></i> Revisión de Vehículos Pendientes</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Vehículos Pendientes: {{ vehiculos_pendientes|length }}</h3>
+            </div>
+        </div>
+
+        {% if vehiculos_pendientes %}
+            {% for vehiculo, usuario in vehiculos_pendientes %}
+            <div class="vehiculo-card">
+                <div class="card-header">
+                    <h3>{{ vehiculo.PLACA }} - {{ vehiculo.TIPO }}</h3>
+                    <span class="estado-badge estado-{{ vehiculo.ESTADO.lower() }}">
+                        {{ vehiculo.ESTADO }}
+                    </span>
+                </div>
+                
+                <div class="propietario-info">
+                    <strong>Propietario:</strong> {{ usuario.NOMBRE }} {{ usuario.APELLIDO }}<br>
+                    <strong>Torre:</strong> {{ usuario.TORRE }} - <strong>Apto:</strong> {{ usuario.APARTAMENTO }}<br>
+                    <strong>Contacto:</strong> {{ usuario.CORREO }} | {{ usuario.TELEFONO }}
+                </div>
+
+                <div class="documentos-section">
+                    <!-- SOAT -->
+                    <div class="documento-item">
+                        <h4><i class="fas fa-file-medical"></i> SOAT</h4>
+                        {% if vehiculo.DOC_SOAT %}
+                            <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_SOAT) }}" 
+                               class="btn btn-primary" target="_blank">
+                                <i class="fas fa-download"></i> Ver SOAT
+                            </a>
+                        {% else %}
+                            <span style="color: #dc3545;">No subido</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Documento de Identidad -->
+                    <div class="documento-item">
+                        <h4><i class="fas fa-id-card"></i> Documento de Identidad</h4>
+                        {% if vehiculo.DOC_IDENTIDAD %}
+                            <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_IDENTIDAD) }}" 
+                               class="btn btn-primary" target="_blank">
+                                <i class="fas fa-download"></i> Ver Identidad
+                            </a>
+                        {% else %}
+                            <span style="color: #dc3545;">No subido</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Tarjeta de Propiedad -->
+                    <div class="documento-item">
+                        <h4><i class="fas fa-file-contract"></i> Tarjeta de Propiedad</h4>
+                        {% if vehiculo.DOC_TARJETA_PROPIEDAD %}
+                            <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_TARJETA_PROPIEDAD) }}" 
+                               class="btn btn-primary" target="_blank">
+                                <i class="fas fa-download"></i> Ver Propiedad
+                            </a>
+                        {% else %}
+                            <span style="color: #dc3545;">No subido</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="acciones-admin">
+                    <a href="{{ url_for('aprobar_vehiculo', id=vehiculo.ID_VEHICULO) }}" 
+                       class="btn btn-success"
+                       onclick="return confirm('¿Aprobar este vehículo para participar en sorteos?')">
+                        <i class="fas fa-check"></i> Aprobar
+                    </a>
+                    <a href="{{ url_for('rechazar_vehiculo', id=vehiculo.ID_VEHICULO) }}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('¿Rechazar este vehículo?')">
+                        <i class="fas fa-times"></i> Rechazar
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: #28a745;"></i>
+                <h3>No hay vehículos pendientes de revisión</h3>
+                <p>Todos los vehículos han sido revisados.</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

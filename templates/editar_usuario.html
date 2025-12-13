@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='crear_usuario.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Editar Usuario</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" value="{{ usuario.NOMBRE }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" value="{{ usuario.APELLIDO }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" value="{{ usuario.CORREO }}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono" value="{{ usuario.TELEFONO }}">
+            </div>
+
+            <!-- Solo mostrar campos Apartamento y Torre si es RESIDENTE -->
+            {% if usuario.ROL == "RESIDENTE" %}
+            <div class="form-group">
+                <label for="apartamento">Apartamento:</label>
+                <input type="text" id="apartamento" name="apartamento" value="{{ usuario.APARTAMENTO }}">
+            </div>
+
+            <div class="form-group">
+                <label for="torre">Torre:</label>
+                <input type="text" id="torre" name="torre" value="{{ usuario.TORRE }}">
+            </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label for="rol">Rol:</label>
+                <select id="rol" name="rol" required>
+                    <option value="ADMINISTRADOR" {% if usuario.ROL == "ADMINISTRADOR" %}selected{% endif %}>Administrador</option>
+                    <option value="RESIDENTE" {% if usuario.ROL == "RESIDENTE" %}selected{% endif %}>Residente</option>
+                    <option value="PORTERO" {% if usuario.ROL == "PORTERO" %}selected{% endif %}>Portero</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="ACTIVO" {% if usuario.ESTADO == "ACTIVO" %}selected{% endif %}>Activo</option>
+                    <option value="INACTIVO" {% if usuario.ESTADO == "INACTIVO" %}selected{% endif %}>Inactivo</option>
+                    <option value="PENDIENTE" {% if usuario.ESTADO == "PENDIENTE" %}selected{% endif %}>Pendiente</option>
+                </select>
+            </div>
+
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                <a href="{{ url_for('gestion_usuarios') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

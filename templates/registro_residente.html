@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Residente - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='registro_residente.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Registro de Nuevo Residente</h2>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <input type="text" name="nombre" placeholder="Nombre" required>
+            <input type="text" name="apellido" placeholder="Apellido" required>
+            <input type="email" name="correo" placeholder="Correo electrónico" required>
+            <input type="tel" name="telefono" placeholder="Teléfono" required>
+            
+            <select name="torre" required>
+                <option value="">Seleccione Torre</option>
+                {% for i in range(1, 23) %}
+                <option value="{{ i }}">Torre {{ i }}</option>
+                {% endfor %}
+            </select>
+            
+            <select name="apartamento" required>
+                <option value="">Seleccione Apartamento</option>
+                {% for piso in range(1, 7) %}
+                    {% for apto in range(1, 5) %}
+                    <option value="{{ piso }}{{ '%02d' % apto }}">{{ piso }}{{ '%02d' % apto }} (Piso {{ piso }}, Apto {{ apto }})</option>
+                    {% endfor %}
+                {% endfor %}
+            </select>
+            
+            <input type="password" name="contrasena" placeholder="Contraseña" required>
+            <input type="password" name="confirmar_contrasena" placeholder="Confirmar Contraseña" required>
+            
+            <button type="submit">Registrarse</button>
+        </form>
+
+        <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+            <p>¿Ya tienes una cuenta? <a href="{{ url_for('login') }}" style="color: #0056b3;">Inicia sesión aquí</a></p>
+        </div>
+    </div>
+</body>
+</html>

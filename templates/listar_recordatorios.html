@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Recordatorios</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #1E3A8A;
+            --light-blue: #4a86e8;
+            --beige: #f5f5dc;
+            --white: #ffffff;
+            --gray: #f4f6f9;
+            --dark-gray: #333;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+        }
+
+        body {
+            background-color: var(--gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: var(--white);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-beige {
+            background: var(--beige);
+            color: var(--primary-blue);
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .recordatorios-grid {
+            display: grid;
+            gap: 15px;
+        }
+
+        .recordatorio-card {
+            background: var(--white);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recordatorio-info strong {
+            color: var(--primary-blue);
+        }
+
+        .estado {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .estado-enviado { background: #d4edda; color: #155724; }
+        .estado-error { background: #f8d7da; color: #721c24; }
+        .estado-pendiente { background: #fff3cd; color: #856404; }
+
+        .alert {
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .alert-success { background: #d4edda; color: #155724; }
+        .alert-error { background: #f8d7da; color: #721c24; }
+        .alert-info { background: #d1ecf1; color: #0c5460; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--dark-gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            color: var(--light-blue);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Encabezado -->
+        <div class="header">
+            <h1><i class="fas fa-bell"></i> Historial de Recordatorios</h1>
+            <div>
+                <a href="{{ url_for('listar_eventos') }}" class="btn btn-beige">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+                <a href="{{ url_for('enviar_recordatorios_correo') }}" class="btn btn-warning">
+                    <i class="fas fa-paper-plane"></i> Enviar Recordatorios
+                </a>
+            </div>
+        </div>
+
+        <!-- Mensajes flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category if category != 'exito' else 'success' if category == 'exito' else 'error' if category == 'error' else 'info' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Lista de recordatorios -->
+        {% if recordatorios %}
+            <div class="recordatorios-grid">
+                {% for r in recordatorios %}
+                    <div class="recordatorio-card">
+                        <div class="recordatorio-info">
+                            <p><strong>Usuario:</strong> {{ r.ID_USUARIO }}</p>
+                            <p><strong>Evento:</strong> {{ r.ID_RESERVA }}</p>
+                            <p><strong>Enviado:</strong> {{ r.FECHA_ENVIO.strftime('%d/%m/%Y %H:%M') }}</p>
+                        </div>
+                        <div>
+                            <span class="estado estado-enviado">Enviado</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-bell-slash"></i>
+                <h3>No hay recordatorios enviados</h3>
+                <p>Aún no se han enviado recordatorios de eventos.</p>
+                <a href="{{ url_for('enviar_recordatorios_correo') }}" class="btn btn-warning">
+                    <i class="fas fa-paper-plane"></i> Enviar Primeros Recordatorios
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
+<!--
+    Plantilla para listar el historial de recordatorios enviados a los usuarios.
+    Muestra una lista de recordatorios con detalles como ID de usuario, ID de evento y fecha de envío.
+    Incluye botones para volver a la página de eventos y para enviar nuevos recordatorios.
+    Maneja mensajes flash para notificaciones de éxito o error.
+    Si no hay recordatorios, muestra un estado vacío con una opción para enviar el primer recordatorio.

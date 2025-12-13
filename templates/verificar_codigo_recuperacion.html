@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Código - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Verificar Código</h2>
+        
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <p>Se ha enviado un código a <strong>{{ correo }}</strong>. Ingréselo a continuación:</p>
+        
+        <form method="POST">
+            <input type="text" name="codigo" placeholder="Código de 6 dígitos" required pattern="[0-9]{6}" title="Ingrese un código de 6 dígitos">
+            <button type="submit">Verificar</button>
+        </form>
+        
+        <div style="margin-top: 20px; font-size: 14px; text-align: center;">
+            <p><a href="{{ url_for('recuperar_clave') }}" style="color: #0056b3;">Reenviar código</a></p>
+        </div>
+    </div>
+</body>
+</html>

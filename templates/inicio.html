@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio - Conjunto Residencial Alameda del Porvenir II</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='inicio.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <i class="fas fa-home"></i> Alameda del Porvenir II
+        </div>
+        <nav>
+            <a href="#comunidad">Comunidad</a>
+            <a href="#servicios">Servicios</a>
+            <a href="#contacto">Contacto</a>
+            <a href="{{ url_for('login') }}" class="btn">Ingresar</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <img src="{{ url_for('static', filename='imagenes/alameda2.png') }}" alt="Conjunto Residencial Alameda del Porvenir II" class="hero-image">
+        <div class="hero-overlay">
+            <h1>Bienvenido a Alameda del Porvenir II</h1>
+            <p>Un espacio seguro, organizado y lleno de comunidad</p>
+            <a href="{{ url_for('login') }}" class="btn btn-primary">Ingresar</a>
+        </div>
+    </div>
+
+    <!-- Comunidad -->
+    <section id="comunidad" class="section">
+        <h2>Nuestra Comunidad</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-users"></i>
+                <h3>Familias Residentes</h3>
+                <p>Más de <strong>350 familias</strong> felices forman parte de nuestra comunidad.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-home"></i>
+                <h3>Unidades Habitacionales</h3>
+                <p>Contamos con <strong>420 unidades</strong> distribuidas en zonas verdes armoniosas.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-heart"></i>
+                <h3>Espacios Comunes</h3>
+                <p>Disfruta de <strong>zonas recreativas</strong>, parques y áreas sociales.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ✅ NUEVA SECCIÓN: Próximos Eventos -->
+    <section id="eventos" class="section">
+        <h2>Próximos Eventos</h2>
+        {% include 'carrusel_eventos.html' %}
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2025 Conjunto Residencial Alameda del Porvenir II - Todos los derechos reservados</p>
+    </footer>
+</body>
+</html>

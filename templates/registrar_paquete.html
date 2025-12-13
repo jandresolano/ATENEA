@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Paquete - Portero</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='panel_portero.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='registrar_paquete.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="registrar-container">
+        <div class="registrar-card">
+            <h1 style="color: var(--primary-blue); margin-bottom: 20px;">
+                <i class="fas fa-box-open"></i> Registrar Nuevo Paquete
+            </h1>
+            
+            <!-- Mensajes Flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        {% if category == 'success' %}
+                            <div class="alert alert-success" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; background: #d4edda; color: #155724; border: 1px solid #c3e6cb;">
+                                <i class="fas fa-check-circle"></i> {{ message }}
+                            </div>
+                        {% elif category == 'error' %}
+                            <div class="alert alert-error" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;">
+                                <i class="fas fa-exclamation-circle"></i> {{ message }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info" style="padding: 10px; margin-bottom: 20px; border-radius: 5px; background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;">
+                                <i class="fas fa-info-circle"></i> {{ message }}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <form method="POST" id="paqueteForm">
+                <div class="registrar-form-row">
+                    <div class="registrar-form-group" style="flex: 1;">
+                        <label for="torre">Torre *</label>
+                        <input type="text" id="torre" name="torre" class="registrar-form-control" required 
+                               placeholder="Ej: A, B, C">
+                    </div>
+                    
+                    <div class="registrar-form-group" style="flex: 1;">
+                        <label for="apartamento">Apartamento *</label>
+                        <input type="text" id="apartamento" name="apartamento" class="registrar-form-control" required 
+                               placeholder="Ej: 101, 202">
+                    </div>
+                </div>
+                
+                <!-- Información del Residente -->
+                <div id="residenteInfo" class="registrar-resident-info" style="display: none;">
+                    <h4 style="margin: 0 0 10px 0; color: var(--success);">
+                        <i class="fas fa-check-circle"></i> Residente encontrado
+                    </h4>
+                    <p id="infoText" style="margin: 0;"></p>
+                </div>
+                
+                <div class="registrar-form-group">
+                    <label for="descripcion">Descripción del paquete *</label>
+                    <textarea id="descripcion" name="descripcion" class="registrar-form-control" rows="3" required 
+                              placeholder="Describa el paquete (tamaño, color, tipo, etc.)"></textarea>
+                </div>
+                
+                <div class="registrar-form-row">
+                    <div class="registrar-form-group" style="flex: 1;">
+                        <label for="remitente">Remitente</label>
+                        <input type="text" id="remitente" name="remitente" class="registrar-form-control" 
+                               placeholder="Quién envía el paquete">
+                    </div>
+                    
+                    <div class="registrar-form-group" style="flex: 1;">
+                        <label for="numero_seguimiento">Número de seguimiento</label>
+                        <input type="text" id="numero_seguimiento" name="numero_seguimiento" class="registrar-form-control" 
+                               placeholder="N° de guía o tracking">
+                    </div>
+                </div>
+                
+                <div class="registrar-form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="registrar-form-control" rows="2" 
+                              placeholder="Notas adicionales"></textarea>
+                </div>
+                
+                <div class="registrar-form-actions">
+                    <button type="submit" class="portero-btn portero-btn-primary">
+                        <i class="fas fa-save"></i> Registrar Paquete
+                    </button>
+                    <a href="{{ url_for('portero.panel_portero') }}" class="portero-btn portero-btn-logout">
+                        <i class="fas fa-arrow-left"></i> Volver al Panel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Buscar residente automáticamente cuando se llenen torre y apartamento
+        const torreInput = document.getElementById('torre');
+        const apartamentoInput = document.getElementById('apartamento');
+        const residenteInfo = document.getElementById('residenteInfo');
+        const infoText = document.getElementById('infoText');
+        
+        function buscarResidente() {
+            const torre = torreInput.value.trim();
+            const apartamento = apartamentoInput.value.trim();
+            
+            if (torre && apartamento) {
+                fetch(`/buscar_residente?torre=${torre}&apartamento=${apartamento}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.existe) {
+                            infoText.innerHTML = `
+                                <strong>Residente:</strong> ${data.nombre}<br>
+                                <strong>Correo:</strong> ${data.correo}<br>
+                                <strong>Teléfono:</strong> ${data.telefono}
+                            `;
+                            residenteInfo.style.display = 'block';
+                            residenteInfo.classList.remove('registrar-resident-warning');
+                            residenteInfo.classList.add('registrar-resident-info');
+                        } else {
+                            infoText.innerHTML = 'No se encontró residente activo en esta unidad';
+                            residenteInfo.style.display = 'block';
+                            residenteInfo.classList.remove('registrar-resident-info');
+                            residenteInfo.classList.add('registrar-resident-warning');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                residenteInfo.style.display = 'none';
+            }
+        }
+        
+        torreInput.addEventListener('input', buscarResidente);
+        apartamentoInput.addEventListener('input', buscarResidente);
+    </script>
+</body>
+</html>

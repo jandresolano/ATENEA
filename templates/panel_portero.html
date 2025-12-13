@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Portero - Conjunto Residencial Alameda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='panel_portero.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="portero-container">
+        <!-- Header -->
+        <div class="portero-header">
+            <div class="portero-welcome-section">
+                <h1>Panel de Portero</h1>
+                <p>Conjunto Residencial Alameda el Porvenir Etapa II</p>
+            </div>
+            
+            <div class="portero-user-menu">
+                <div class="portero-user-info">
+                    <div class="portero-user-name">{{ user_name }}</div>
+                    <div class="portero-user-role">{{ user_role }}</div>
+                </div>
+                <div class="portero-menu-actions">
+                    <a href="{{ url_for('logout') }}" class="portero-btn portero-btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="portero-stats-container">
+            <div class="portero-stat-card">
+                <i class="fas fa-box portero-stat-icon"></i>
+                <div class="portero-stat-value">{{ total_paquetes }}</div>
+                <div class="portero-stat-label">Paquetes Totales</div>
+            </div>
+            <div class="portero-stat-card">
+                <i class="fas fa-clock portero-stat-icon"></i>
+                <div class="portero-stat-value">{{ paquetes_pendientes }}</div>
+                <div class="portero-stat-label">Pendientes de Entrega</div>
+            </div>
+            <div class="portero-stat-card">
+                <i class="fas fa-bell portero-stat-icon"></i>
+                <div class="portero-stat-value">{{ paquetes_notificados }}</div>
+                <div class="portero-stat-label">Notificados</div>
+            </div>
+            <div class="portero-stat-card">
+                <i class="fas fa-check-circle portero-stat-icon"></i>
+                <div class="portero-stat-value">{{ paquetes_entregados }}</div>
+                <div class="portero-stat-label">Entregados Hoy</div>
+            </div>
+        </div>
+
+        <!-- Acceso Rápido -->
+        <div class="portero-section-box">
+            <h2>Gestión de Paquetes</h2>
+            <div class="portero-quick-actions">
+                <a href="{{ url_for('portero.registrar_paquete') }}" class="portero-btn portero-btn-primary">
+                    <i class="fas fa-box-open"></i> Registrar Nuevo Paquete
+                </a>
+                <a href="{{ url_for('portero.listar_paquetes') }}" class="portero-btn portero-btn-success">
+                    <i class="fas fa-list"></i> Ver Todos los Paquetes
+                </a>
+            </div>
+        </div>
+
+        <!-- Tarjetas de Funcionalidades -->
+        <div class="portero-dashboard">
+            <!-- Registrar Paquete -->
+            <div class="portero-card">
+                <div class="portero-card-header">
+                    <i class="fas fa-box-open portero-card-icon"></i>
+                    <h3 class="portero-card-title">Registrar Paquete</h3>
+                </div>
+                <div class="portero-card-content">
+                    <p>Registre un nuevo paquete que ha llegado para un residente.</p>
+                </div>
+                <div class="portero-card-actions">
+                    <a href="{{ url_for('portero.registrar_paquete') }}" class="portero-btn portero-btn-primary">
+                        <i class="fas fa-plus-circle"></i> Registrar
+                    </a>
+                </div>
+            </div>
+
+            <!-- Paquetes Pendientes -->
+            <div class="portero-card">
+                <div class="portero-card-header">
+                    <i class="fas fa-clock portero-card-icon"></i>
+                    <h3 class="portero-card-title">Paquetes Pendientes</h3>
+                </div>
+                <div class="portero-card-content">
+                    <p>Vea y gestione los paquetes pendientes de notificación.</p>
+                </div>
+                <div class="portero-card-actions">
+                    <a href="{{ url_for('portero.paquetes_pendientes') }}" class="portero-btn portero-btn-warning">
+                        <i class="fas fa-list"></i> Ver Pendientes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Notificaciones -->
+            <div class="portero-card">
+                <div class="portero-card-header">
+                    <i class="fas fa-bell portero-card-icon"></i>
+                    <h3 class="portero-card-title">Notificaciones</h3>
+                </div>
+                <div class="portero-card-content">
+                    <p>Envíe notificaciones a residentes sobre paquetes.</p>
+                </div>
+                <div class="portero-card-actions">
+                    <a href="{{ url_for('portero.listar_paquetes') }}" class="portero-btn portero-btn-primary">
+                        <i class="fas fa-envelope"></i> Gestionar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Paquetes Recientes -->
+        <div class="portero-table-container">
+            <h2>Paquetes Recientes</h2>
+            {% if paquetes_recientes %}
+            <table class="portero-packages-table">
+                <thead>
+                    <tr>
+                        <th>Torre/Apto</th>
+                        <th>Descripción</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paquete in paquetes_recientes %}
+                    <tr>
+                        <td>{{ paquete.torre }}-{{ paquete.apartamento }}</td>
+                        <td>{{ paquete.descripcion[:50] }}{% if paquete.descripcion|length > 50 %}...{% endif %}</td>
+                        <td>{{ paquete.fecha_ingreso.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            <span class="portero-status-badge portero-status-{{ paquete.estado }}">
+                                {{ paquete.estado|title }}
+                            </span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                {% if paquete.estado != 'entregado' %}
+                                <a href="{{ url_for('portero.marcar_entregado', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-success" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Marcar este paquete como entregado?')">
+                                    <i class="fas fa-check"></i>
+                                </a>
+                                <a href="{{ url_for('portero.notificar_paquete', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-primary" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Enviar notificación de este paquete?')">
+                                    <i class="fas fa-bell"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p style="text-align: center; padding: 20px; color: var(--disabled);">
+                No hay paquetes registrados aún.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Footer -->
+        <div class="portero-footer">
+            <p>Sistema de Portero - Conjunto Residencial Alameda el Porvenir © 2023</p>
+        </div>
+    </div>
+
+    <script>
+        // Efecto de carga inicial para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.portero-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 100));
+            });
+        });
+    </script>
+</body>
+</html>

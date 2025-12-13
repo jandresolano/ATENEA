@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Residente - Conjunto Residencial Alameda</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='panel_residente.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="resident-container">
+        <div class="header">
+            <div class="welcome-section">
+                <h1>Panel del Residente</h1>
+                <p>Conjunto Residencial Alameda el Porvenir Etapa II</p>
+            </div>
+            
+            <div class="user-menu">
+                <div class="user-info">
+                    <div class="user-name">{{ user_name }}</div>
+                    <div class="user-role">{{ user_role }}</div>
+                </div>
+                <div class="menu-actions">
+                    <a href="{{ url_for('logout') }}" class="btn btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="quick-access">
+            <h2>Acceso Rápido</h2>
+            <div class="quick-actions">
+                <a href="{{ url_for('listar_eventos') }}" class="btn btn-primary">
+                    <i class="fas fa-calendar-alt"></i> Ver Eventos
+                </a>
+                <button class="btn btn-beige" onclick="alert('Funcionalidad en desarrollo: Registrar visitas')">
+                    <i class="fas fa-user-plus"></i> Registrar Visitas
+                </button>
+                <a href="{{ url_for('listar_vehiculos') }}" class="btn btn-success">
+                    <i class="fas fa-car-side"></i> Mis Vehículos
+                </a>
+            </div>
+        </div>
+        
+        <div class="stats-container">
+            <div class="stat-card">
+                <i class="fas fa-calendar-check stat-icon"></i>
+                <div class="stat-value">{{ eventos_inscritos }}</div>
+                <div class="stat-label">Eventos Inscritos</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock stat-icon"></i>
+                <div class="stat-value">{{ eventos_pendientes }}</div>
+                <div class="stat-label">Inscripciones Pendientes</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-home stat-icon"></i>
+                <div class="stat-value">1</div>
+                <div class="stat-label">Unidad Habitacional</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-users stat-icon"></i>
+                <div class="stat-value">{{ visitas_registradas }}</div>
+                <div class="stat-label">Visitas Registradas</div>
+            </div>
+        </div>
+        
+        <div class="eventos-section">
+            <h2>Próximos Eventos</h2>
+            <div class="eventos-list">
+                {% if eventos_proximos %}
+                    {% for evento in eventos_proximos %}
+                    <div class="evento-card {% if evento.ESTADO == 'CANCELADO' %}cancelado{% endif %}">
+                        <div class="evento-header">
+                            <h3 class="evento-title">{{ evento.NOMBRE }}</h3>
+                            <span class="evento-estado estado-{{ 'cancelado' if evento.ESTADO == 'CANCELADO' else 'activo' }}">
+                                {{ evento.ESTADO }}
+                            </span>
+                        </div>
+                        
+                        <div class="evento-fecha">
+                            <i class="fas fa-calendar-day"></i> 
+                            {{ evento.FECHA_HORA.strftime('%d/%m/%Y a las %H:%M') }}
+                        </div>
+                        
+                        {% if evento.DESCRIPCION %}
+                        <div class="evento-descripcion">
+                            {{ evento.DESCRIPCION }}
+                        </div>
+                        {% endif %}
+                        
+                        <div class="evento-actions">
+                            {% if evento.ESTADO != 'CANCELADO' %}
+                                {% if evento.ID_RESERVA in eventos_inscritos_ids %}
+                                    <span class="btn btn-success">
+                                        <i class="fas fa-check-circle"></i> Inscrito
+                                    </span>
+                                    <a href="{{ url_for('desinscribirse_evento', id=evento.ID_RESERVA) }}" class="btn btn-warning">
+                                        <i class="fas fa-user-minus"></i> Cancelar
+                                    </a>
+                                {% else %}
+                                    <a href="{{ url_for('inscribirse_evento', id=evento.ID_RESERVA) }}" class="btn btn-primary">
+                                        <i class="fas fa-user-plus"></i> Inscribirse
+                                    </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <h3>No hay eventos programados</h3>
+                    <p>Actualmente no hay eventos disponibles para inscripción.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calendar-alt card-icon"></i>
+                    <h3 class="card-title">Eventos y Actividades</h3>
+                </div>
+                <div class="card-content">
+                    <p>Participe en los eventos comunitarios, inscríbase en actividades y consulte el calendario de eventos del conjunto.</p>
+                </div>
+                <div class="card-actions">
+                    <a href="{{ url_for('listar_eventos') }}" class="btn btn-primary">
+                        <i class="fas fa-list"></i> Ver Todos los Eventos
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-user-friends card-icon"></i>
+                    <h3 class="card-title">Registro de Visitas</h3>
+                </div>
+                <div class="card-content">
+                    <p>Registre las visitas que recibirá en su apartamento para agilizar el ingreso al conjunto residencial.</p>
+                </div>
+                <div class="card-actions">
+                    <button class="btn btn-primary" onclick="alert('Funcionalidad en desarrollo: Registrar visitas')">
+                        <i class="fas fa-user-plus"></i> Registrar Visita
+                    </button>
+                    <button class="btn btn-beige" onclick="alert('Funcionalidad en desarrollo: Historial visitas')">
+                        <i class="fas fa-history"></i> Historial
+                    </button>
+                </div>
+            </div>
+
+            <!-- ======= CONTENEDOR DE VEHÍCULOS ======= -->
+            <div class="card vehiculos-card">
+                <div class="card-header">
+                    <i class="fas fa-car-side card-icon"></i>
+                    <h3 class="card-title">Mis Vehículos</h3>
+                </div>
+                <div class="card-content">
+                    <p>Gestiona tus vehículos registrados. Puedes ver tus vehículos, editar o registrar uno nuevo rápidamente.</p>
+                    <p><strong>Tienes:</strong> <span style="color:var(--primary-blue); font-weight:700;">{{ vehiculos_count if vehiculos_count is defined else 0 }}</span> vehículo(s) registrado(s).</p>
+
+                    <div class="vehiculos-list-mini">
+                        {% if vehiculos %}
+                            {% for v in vehiculos[:3] %}
+                            <div class="vehiculo-mini">
+                                <div>
+                                    <strong>{{ v.PLACA }}</strong><br>
+                                    <small>{{ v.TIPO_VEHICULO or v.TIPO }}</small>
+                                </div>
+                                <div style="text-align:right;">
+                                    <small>{{ v.COLOR or '—' }}</small><br>
+                                    <a href="{{ url_for('editar_vehiculo', id=v.ID_VEHICULO) }}" class="btn btn-warning" style="padding:6px 10px; font-size:0.85rem; margin-top:4px;">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% if vehiculos|length > 3 %}
+                            <div style="text-align:center; margin-top:6px;">
+                                <a href="{{ url_for('listar_vehiculos') }}" class="btn btn-beige" style="padding:6px 10px; font-size:0.9rem;">
+                                    Ver todos ({{ vehiculos|length }})
+                                </a>
+                            </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="empty-state" style="padding:10px;">
+                                <i class="fas fa-car-side" style="font-size:28px;"></i>
+                                <h4 style="margin-top:8px;">No tienes vehículos registrados</h4>
+                                <p style="margin-top:6px;">Agrega tu vehículo para participar en asignaciones o registro de parqueadero.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <a href="{{ url_for('listar_vehiculos') }}" class="btn btn-primary"><i class="fas fa-list"></i> Gestionar Vehículos</a>
+                    <button class="btn btn-success" onclick="openModal()"><i class="fas fa-plus-circle"></i> Registrar Rápido</button>
+                </div>
+            </div>
+            <!-- ======= FIN CONTENEDOR VEHÍCULOS ======= -->
+        </div>
+        
+        <div class="footer">
+            <p>Sistema de Residentes - Conjunto Residencial Alameda el Porvenir © {{ current_year or 2025 }}</p>
+        </div>
+    </div>
+
+    <!-- ===== Modal Rápido: Registrar Vehículo ===== -->
+    <div id="modalBackdrop" class="modal-backdrop" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="modal" role="document" aria-labelledby="modalTitle">
+            <h3 id="modalTitle"><i class="fas fa-plus-circle"></i> Registrar Vehículo</h3>
+            <form id="modalRegisterForm" method="POST" action="{{ url_for('crear_vehiculo') }}">
+                <label for="placa_modal">Placa</label>
+                <input id="placa_modal" name="placa" type="text" maxlength="10" required placeholder="ABC123">
+                
+                <label for="tipo_modal">Tipo</label>
+                <select id="tipo_modal" name="tipo_vehiculo" required>
+                    <option value="">Selecciona...</option>
+                    <option value="CARRO">Carro</option>
+                    <option value="MOTO">Moto</option>
+                    <option value="BICICLETA">Bicicleta</option>
+                </select>
+
+                <label for="marca_modal">Marca</label>
+                <input id="marca_modal" name="marca" type="text" placeholder="Ej: Toyota">
+
+                <label for="modelo_modal">Modelo</label>
+                <input id="modelo_modal" name="modelo" type="text" placeholder="Ej: Corolla">
+
+                <label for="color_modal">Color</label>
+                <input id="color_modal" name="color" type="text" placeholder="Ej: Rojo">
+
+                <div class="actions">
+                    <button type="button" class="btn btn-beige" onclick="closeModal()">Cancelar</button>
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Efecto de carga inicial para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 80));
+            });
+
+            // Asegurar que inputs de placa se conviertan a mayúscula en modal
+            const placaModal = document.getElementById('placa_modal');
+            if (placaModal) {
+                placaModal.addEventListener('input', (e) => {
+                    e.target.value = e.target.value.toUpperCase();
+                });
+            }
+        });
+
+        // Modal functions
+        function openModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            backdrop.style.display = 'flex';
+            backdrop.setAttribute('aria-hidden', 'false');
+            // focus on first input
+            setTimeout(() => {
+                const placa = document.getElementById('placa_modal');
+                if (placa) placa.focus();
+            }, 100);
+        }
+        function closeModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            backdrop.style.display = 'none';
+            backdrop.setAttribute('aria-hidden', 'true');
+            // clear form
+            const form = document.getElementById('modalRegisterForm');
+            if (form) form.reset();
+        }
+
+        // close modal when clicking outside
+        document.getElementById('modalBackdrop').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // optional: intercept form submit to show loader or disable button (simple UX improvement)
+        const modalForm = document.getElementById('modalRegisterForm');
+        if (modalForm) {
+            modalForm.addEventListener('submit', function() {
+                // disable submit to avoid double post
+                const btn = this.querySelector('button[type="submit"]');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = 'Guardando...';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

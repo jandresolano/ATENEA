@@ -1,0 +1,389 @@
+:root {
+    --blue: #0056b3;
+    --green: #28a745;
+    --red: #dc3545;
+    --gray: #f4f4f4;
+    --white: #ffffff;
+    --carro: #007bff;
+    --moto: #ff6600;
+    --bicicleta: #ffc107;
+    --info: #17a2b8;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --success: #28a745;
+}
+
+.btn-asignar {
+    background: #17a2b8 !important;
+    color: white !important;
+}
+
+.btn-ver {
+    background: #6c757d !important;
+    color: white !important;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--blue), #4a86e8);
+    margin: 0;
+    padding: 20px;
+    color: #333;
+    min-height: 100vh;
+}
+
+.sorteo-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+
+.sorteo-container h1 {
+    text-align: center;
+    color: var(--blue);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.mensaje {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 1px solid transparent;
+}
+
+.mensaje.exito { 
+    background: #d4edda; 
+    color: #155724; 
+    border-color: #c3e6cb;
+}
+.mensaje.error { 
+    background: #f8d7da; 
+    color: #721c24; 
+    border-color: #f5c6cb;
+}
+.mensaje.info { 
+    background: #cce5ff; 
+    color: #004085; 
+    border-color: #b8daff;
+}
+.mensaje.warning { 
+    background: #fff3cd; 
+    color: #856404; 
+    border-color: #ffeaa7;
+}
+
+.acciones {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--white);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-carro {
+    background: var(--carro);
+}
+
+.btn-carro:hover {
+    background: #0056b3;
+}
+
+.btn-moto {
+    background: var(--moto);
+}
+
+.btn-moto:hover {
+    background: #cc5200;
+}
+
+.btn-bicicleta {
+    background: var(--bicicleta);
+    color: #212529;
+}
+
+.btn-bicicleta:hover {
+    background: #e0a800;
+    color: #212529;
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+
+.btn-secondary:hover {
+    background: #545b62;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.tabla-sorteos {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tabla-sorteos th, .tabla-sorteos td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tabla-sorteos th {
+    background: var(--blue);
+    color: var(--white);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.tabla-sorteos tr:hover {
+    background-color: #f8f9fa;
+}
+
+.tabla-sorteos tr.carro {
+    background: rgba(0, 123, 255, 0.03);
+}
+
+.tabla-sorteos tr.moto {
+    background: rgba(255, 102, 0, 0.03);
+}
+
+.tabla-sorteos tr.bicicleta {
+    background: rgba(255, 193, 7, 0.03);
+}
+
+.resultado {
+    font-weight: bold;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.resultado.ganador {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.resultado.espera {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.no-data {
+    text-align: center;
+    margin: 40px 0;
+    color: #6c757d;
+    font-style: italic;
+    padding: 20px;
+}
+
+.no-data i {
+    font-size: 3rem;
+    color: #dee2e6;
+    margin-bottom: 10px;
+}
+
+.acciones-sorteo {
+    display: flex;
+    gap: 8px;
+}
+
+/* Estilos para estadísticas */
+.estadisticas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 30px 0;
+}
+
+.estadistica-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    border-left: 5px solid #0056b3;
+}
+
+.estadistica-card:hover {
+    transform: translateY(-5px);
+}
+
+.estadistica-card.suficiente {
+    border-left-color: var(--success);
+}
+
+.estadistica-card.insuficiente {
+    border-left-color: var(--warning);
+}
+
+.numero-estadistica {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #0056b3;
+}
+
+.badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge.success {
+    background: var(--success);
+    color: white;
+}
+
+.badge.warning {
+    background: var(--warning);
+    color: #212529;
+}
+
+/* Estilos para asignación de parqueaderos */
+.parqueadero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.parqueadero-card {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    border: 2px solid #0056b3;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.parqueadero-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.parqueadero-numero {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0056b3;
+    margin-bottom: 10px;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.residente-info {
+    font-size: 0.9rem;
+    color: #666;
+    line-height: 1.4;
+}
+
+.asignacion-form {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 25px;
+    border: 1px solid #e9ecef;
+}
+
+.info-sorteo {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 5px solid var(--blue);
+}
+
+.info-sorteo h3 {
+    color: var(--blue);
+    margin-bottom: 15px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 8px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .acciones {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .btn {
+        justify-content: center;
+    }
+    
+    .tabla-sorteos {
+        font-size: 0.9rem;
+    }
+    
+    .tabla-sorteos th, 
+    .tabla-sorteos td {
+        padding: 8px;
+    }
+    
+    .estadisticas-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .parqueadero-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .sorteo-container {
+        padding: 15px;
+    }
+    
+    .parqueadero-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .acciones-sorteo {
+        flex-direction: column;
+        gap: 5px;
+    }
+}

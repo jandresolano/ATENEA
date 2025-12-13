@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario - Conjunto Residencial</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='crear_usuario.css') }}">
+    <!-- Font Awesome para ícono de ojo -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Crear Nuevo Usuario</h2>
+        
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="apellido">Apellido:</label>
+                <input type="text" id="apellido" name="apellido" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="correo">Correo Electrónico:</label>
+                <input type="email" id="correo" name="correo" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono:</label>
+                <input type="tel" id="telefono" name="telefono">
+            </div>
+            
+            <div class="form-group">
+                <label for="rol">Rol:</label>
+                <select id="rol" name="rol" required>
+                    <option value="">Seleccione un rol</option>
+                    <option value="ADMINISTRADOR">Administrador</option>
+                    <option value="RESIDENTE">Residente</option>
+                    <option value="PORTERO">Portero</option>
+                </select>
+            </div>
+
+            <!-- Campos extra solo para residentes -->
+            <div id="residente-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="torre">Torre:</label>
+                    <select id="torre" name="torre">
+                        <option value="">Seleccione torre</option>
+                        {% for i in range(1, 23) %}
+                        <option value="{{ i }}">Torre {{ i }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="apartamento">Apartamento:</label>
+                    <select id="apartamento" name="apartamento">
+                        <option value="">Seleccione apartamento</option>
+                        <!-- Las opciones se llenarán con JavaScript -->
+                    </select>
+                    <small style="display: block; margin-top: 5px; color: #666;">
+                        Formato: 101 (piso 1, apto 1) hasta 604 (piso 6, apto 4)
+                    </small>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="estado">Estado:</label>
+                <select id="estado" name="estado" required>
+                    <option value="">Seleccione un estado</option>
+                    <option value="ACTIVO">Activo</option>
+                    <option value="INACTIVO">Inactivo</option>
+                </select>
+            </div>
+            
+            <!-- Contraseña con botón de ver/ocultar -->
+            <div class="form-group password-container">
+                <label for="contrasena">Contraseña:</label>
+                <input type="password" id="contrasena" name="contrasena" required>
+                <button type="button" class="toggle-password" onclick="togglePassword('contrasena')" aria-label="Mostrar/Ocultar contraseña">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </div>
+            
+            <div class="btn-container">
+                <button type="submit" class="btn btn-primary">Crear Usuario</button>
+                <a href="{{ url_for('panel_administrador') }}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Mostrar/ocultar contraseña
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = input.parentNode.querySelector('.toggle-password i');
+            
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Generar opciones de apartamentos
+        function generarApartamentos() {
+            const select = document.getElementById('apartamento');
+            select.innerHTML = '<option value="">Seleccione apartamento</option>';
+            
+            for (let piso = 1; piso <= 6; piso++) {
+                for (let apto = 1; apto <= 4; apto++) {
+                    const numero = piso * 100 + apto;
+                    const option = document.createElement('option');
+                    option.value = numero.toString();
+                    option.textContent = `${numero} (Piso ${piso}, Apto ${apto})`;
+                    select.appendChild(option);
+                }
+            }
+        }
+
+        // Mostrar campos de Residente
+        const rolSelect = document.getElementById('rol');
+        const residenteFields = document.getElementById('residente-fields');
+
+        rolSelect.addEventListener('change', function() {
+            if (this.value === 'RESIDENTE') {
+                residenteFields.style.display = 'block';
+                generarApartamentos();
+                document.getElementById('torre').setAttribute('required', 'required');
+                document.getElementById('apartamento').setAttribute('required', 'required');
+            } else {
+                residenteFields.style.display = 'none';
+                document.getElementById('torre').removeAttribute('required');
+                document.getElementById('apartamento').removeAttribute('required');
+            }
+        });
+
+        // Generar apartamentos al cargar la página si ya está seleccionado RESIDENTE
+        if (rolSelect.value === 'RESIDENTE') {
+            residenteFields.style.display = 'block';
+            generarApartamentos();
+        }
+    </script>
+</body>
+</html>

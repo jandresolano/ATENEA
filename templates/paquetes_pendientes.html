@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paquetes Pendientes - Portero</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='panel_portero.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="portero-container">
+        <div class="portero-header">
+            <div class="portero-welcome-section">
+                <h1>Paquetes Pendientes</h1>
+                <p>Paquetes que requieren notificación</p>
+            </div>
+            <div class="portero-user-menu">
+                <a href="{{ url_for('portero.panel_portero') }}" class="portero-btn portero-btn-primary">
+                    <i class="fas fa-arrow-left"></i> Volver al Panel
+                </a>
+                <a href="{{ url_for('portero.listar_paquetes') }}" class="portero-btn portero-btn-logout">
+                    <i class="fas fa-list"></i> Ver Todos
+                </a>
+            </div>
+        </div>
+
+        <div class="portero-table-container">
+            <h2>Paquetes Pendientes de Notificación ({{ paquetes|length }})</h2>
+            
+            {% if paquetes %}
+            <table class="portero-packages-table">
+                <thead>
+                    <tr>
+                        <th>Torre/Apto</th>
+                        <th>Descripción</th>
+                        <th>Remitente</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for paquete in paquetes %}
+                    <tr>
+                        <td><strong>{{ paquete.torre }}-{{ paquete.apartamento }}</strong></td>
+                        <td>{{ paquete.descripcion }}</td>
+                        <td>{{ paquete.remitente or 'N/A' }}</td>
+                        <td>{{ paquete.fecha_ingreso.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>
+                            <div style="display: flex; gap: 5px;">
+                                <a href="{{ url_for('portero.notificar_paquete', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-primary" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Enviar notificación de este paquete?')">
+                                    <i class="fas fa-bell"></i> Notificar
+                                </a>
+                                <a href="{{ url_for('portero.marcar_entregado', paquete_id=paquete.id) }}" 
+                                   class="portero-btn portero-btn-success" 
+                                   style="padding: 5px 10px; font-size: 0.8rem;"
+                                   onclick="return confirm('¿Marcar este paquete como entregado?')">
+                                    <i class="fas fa-check"></i> Entregado
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="text-align: center; padding: 40px;">
+                <i class="fas fa-check-circle" style="font-size: 3rem; color: var(--success); margin-bottom: 15px;"></i>
+                <p style="color: var(--success); font-size: 1.1rem;">
+                    ¡Excelente! No hay paquetes pendientes de notificación.
+                </p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

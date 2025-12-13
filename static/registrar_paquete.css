@@ -1,0 +1,75 @@
+.registrar-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.registrar-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.registrar-form-group {
+    margin-bottom: 20px;
+}
+
+.registrar-form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.registrar-form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.registrar-form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid var(--light-gray);
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.registrar-form-control:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(0, 86, 179, 0.1);
+}
+
+.registrar-resident-info {
+    background: var(--light-beige);
+    padding: 15px;
+    border-radius: 5px;
+    margin: 15px 0;
+    border-left: 4px solid var(--success);
+    transition: all 0.3s ease;
+}
+
+.registrar-resident-warning {
+    border-left-color: var(--warning);
+    background: #fff3cd;
+}
+
+.registrar-form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+    .registrar-form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .registrar-form-actions {
+        flex-direction: column;
+    }
+}

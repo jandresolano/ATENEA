@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar Vehículo - Alameda</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='panel_residente.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #4a86e8, #0056b3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .form-container {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #0056b3;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    form label {
+      display: block;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #333;
+    }
+    form input, form select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    .file-input {
+      background: #f8f9fa;
+      border: 2px dashed #dee2e6;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-radius: 6px;
+      margin-top: 5px;
+    }
+    .file-input:hover {
+      background: #e9ecef;
+      border-color: #0056b3;
+    }
+    .file-input small {
+      display: block;
+      color: #6c757d;
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 8px;
+      background: #ffc107;
+      color: #333;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      font-size: 1rem;
+    }
+    .btn:hover { 
+      background: #e0a800; 
+      transform: translateY(-2px);
+    }
+    .back-link {
+      text-align: center;
+      display: block;
+      margin-top: 20px;
+      color: #0056b3;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .back-link:hover { 
+      text-decoration: underline; 
+    }
+    .alert {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .alert-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .alert-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .info-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 3px;
+    }
+    .documento-actual {
+      background: #e7f3ff;
+      padding: 8px;
+      border-radius: 4px;
+      margin-top: 5px;
+      font-size: 0.85rem;
+    }
+    .documento-actual a {
+      color: #0056b3;
+      text-decoration: none;
+    }
+    .documento-actual a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container">
+    <h2><i class="fas fa-edit"></i> Editar Vehículo</h2>
+    
+    <!-- Mostrar mensajes flash -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    
+    <form action="{{ url_for('editar_vehiculo', id=vehiculo.ID_VEHICULO) }}" method="POST" enctype="multipart/form-data">
+      <label for="placa">Placa:</label>
+      <input type="text" name="placa" id="placa" value="{{ vehiculo.PLACA }}" required oninput="this.value = this.value.toUpperCase()">
+
+      <label for="tipo">Tipo:</label>
+      <select name="tipo" id="tipo" required>
+        <option value="CARRO" {% if vehiculo.TIPO == 'CARRO' %}selected{% endif %}>Carro</option>
+        <option value="MOTO" {% if vehiculo.TIPO == 'MOTO' %}selected{% endif %}>Moto</option>
+        <option value="BICICLETA" {% if vehiculo.TIPO == 'BICICLETA' %}selected{% endif %}>Bicicleta</option>
+      </select>
+
+      <!-- Documentos (opcionales en edición) -->
+      <label for="soat">SOAT (opcional):</label>
+      {% if vehiculo.DOC_SOAT %}
+      <div class="documento-actual">
+        <i class="fas fa-file-pdf"></i> Documento actual: 
+        <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_SOAT) }}" target="_blank">
+          {{ vehiculo.DOC_SOAT }}
+        </a>
+      </div>
+      {% endif %}
+      <div class="file-input">
+        <input type="file" name="soat" id="soat" accept=".pdf,.png,.jpg,.jpeg">
+        <small>Dejar vacío para mantener el documento actual</small>
+      </div>
+
+      <label for="identidad">Documento de Identidad (opcional):</label>
+      {% if vehiculo.DOC_IDENTIDAD %}
+      <div class="documento-actual">
+        <i class="fas fa-file-pdf"></i> Documento actual: 
+        <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_IDENTIDAD) }}" target="_blank">
+          {{ vehiculo.DOC_IDENTIDAD }}
+        </a>
+      </div>
+      {% endif %}
+      <div class="file-input">
+        <input type="file" name="identidad" id="identidad" accept=".pdf,.png,.jpg,.jpeg">
+        <small>Dejar vacío para mantener el documento actual</small>
+      </div>
+
+      <label for="tarjeta_propiedad">Tarjeta de Propiedad (opcional):</label>
+      {% if vehiculo.DOC_TARJETA_PROPIEDAD %}
+      <div class="documento-actual">
+        <i class="fas fa-file-pdf"></i> Documento actual: 
+        <a href="{{ url_for('descargar_documento', filename=vehiculo.DOC_TARJETA_PROPIEDAD) }}" target="_blank">
+          {{ vehiculo.DOC_TARJETA_PROPIEDAD }}
+        </a>
+      </div>
+      {% endif %}
+      <div class="file-input">
+        <input type="file" name="tarjeta_propiedad" id="tarjeta_propiedad" accept=".pdf,.png,.jpg,.jpeg">
+        <small>Dejar vacío para mantener el documento actual</small>
+      </div>
+
+      <p class="info-text">
+        <i class="fas fa-info-circle"></i>
+        Al actualizar documentos, el estado del vehículo volverá a "PENDIENTE" para nueva revisión.
+      </p>
+
+      <button type="submit" class="btn"><i class="fas fa-save"></i> Actualizar Vehículo</button>
+    </form>
+    <a href="{{ url_for('listar_vehiculos') }}" class="back-link">
+      <i class="fas fa-arrow-left"></i> Volver
+    </a>
+  </div>
+
+  <script>
+    // Convertir placa a mayúsculas automáticamente
+    document.getElementById('placa').addEventListener('input', function(e) {
+      e.target.value = e.target.value.toUpperCase();
+    });
+  </script>
+</body>
+</html>
