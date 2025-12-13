@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-12-2025 a las 06:22:40
+-- Tiempo de generación: 12-12-2025 a las 17:30:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.0.30
 
@@ -20,9 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Base de datos: `sistema_residencial`
 --
-DROP DATABASE IF EXISTS `sistema_residencial`;
-CREATE DATABASE IF NOT EXISTS `sistema_residencial` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
-USE `sistema_residencial`;
 
 -- --------------------------------------------------------
 
@@ -30,7 +27,6 @@ USE `sistema_residencial`;
 -- Estructura de tabla para la tabla `actividad`
 --
 
-DROP TABLE IF EXISTS `actividad`;
 CREATE TABLE `actividad` (
   `ID_ACTIVIDAD` int(11) NOT NULL,
   `DESCRIPCION` text NOT NULL,
@@ -44,7 +40,6 @@ CREATE TABLE `actividad` (
 -- Estructura de tabla para la tabla `anuncio`
 --
 
-DROP TABLE IF EXISTS `anuncio`;
 CREATE TABLE `anuncio` (
   `ID_ANUNCIO` int(11) NOT NULL,
   `TITULO` varchar(100) NOT NULL,
@@ -59,7 +54,6 @@ CREATE TABLE `anuncio` (
 -- Estructura de tabla para la tabla `aviso`
 --
 
-DROP TABLE IF EXISTS `aviso`;
 CREATE TABLE `aviso` (
   `ID_AVISO` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL,
@@ -77,7 +71,6 @@ CREATE TABLE `aviso` (
 -- Estructura de tabla para la tabla `correspondencia`
 --
 
-DROP TABLE IF EXISTS `correspondencia`;
 CREATE TABLE `correspondencia` (
   `ID_CORRESPONDENCIA` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL,
@@ -94,7 +87,6 @@ CREATE TABLE `correspondencia` (
 -- Estructura de tabla para la tabla `detalle_instrumental`
 --
 
-DROP TABLE IF EXISTS `detalle_instrumental`;
 CREATE TABLE `detalle_instrumental` (
   `ID_PRESTAMO` int(11) NOT NULL,
   `ID_INSTRUMENTAL` int(11) NOT NULL,
@@ -107,7 +99,6 @@ CREATE TABLE `detalle_instrumental` (
 -- Estructura de tabla para la tabla `detalle_prestamo`
 --
 
-DROP TABLE IF EXISTS `detalle_prestamo`;
 CREATE TABLE `detalle_prestamo` (
   `ID_PRESTAMO` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL
@@ -119,7 +110,6 @@ CREATE TABLE `detalle_prestamo` (
 -- Estructura de tabla para la tabla `detalle_reserva`
 --
 
-DROP TABLE IF EXISTS `detalle_reserva`;
 CREATE TABLE `detalle_reserva` (
   `ID_RESERVA` int(11) NOT NULL,
   `ID_ESPACIO` int(11) NOT NULL
@@ -131,7 +121,6 @@ CREATE TABLE `detalle_reserva` (
 -- Estructura de tabla para la tabla `detalle_sorteo`
 --
 
-DROP TABLE IF EXISTS `detalle_sorteo`;
 CREATE TABLE `detalle_sorteo` (
   `ID_USUARIO` int(11) NOT NULL,
   `ID_SORTEO` int(11) NOT NULL,
@@ -146,7 +135,6 @@ CREATE TABLE `detalle_sorteo` (
 -- Estructura de tabla para la tabla `documento_vehiculo`
 --
 
-DROP TABLE IF EXISTS `documento_vehiculo`;
 CREATE TABLE `documento_vehiculo` (
   `ID_DOCUMENTO` int(11) NOT NULL,
   `ID_VEHICULO` int(11) NOT NULL,
@@ -164,7 +152,6 @@ CREATE TABLE `documento_vehiculo` (
 -- Estructura de tabla para la tabla `espacio_comunal`
 --
 
-DROP TABLE IF EXISTS `espacio_comunal`;
 CREATE TABLE `espacio_comunal` (
   `ID_ESPACIO` int(11) NOT NULL,
   `NOMBRE` varchar(50) NOT NULL,
@@ -177,7 +164,6 @@ CREATE TABLE `espacio_comunal` (
 -- Estructura de tabla para la tabla `evento`
 --
 
-DROP TABLE IF EXISTS `evento`;
 CREATE TABLE `evento` (
   `ID_EVENTO` int(11) NOT NULL,
   `TITULO` varchar(100) NOT NULL,
@@ -193,7 +179,6 @@ CREATE TABLE `evento` (
 -- Estructura de tabla para la tabla `gestion_espera`
 --
 
-DROP TABLE IF EXISTS `gestion_espera`;
 CREATE TABLE `gestion_espera` (
   `ID_ESPERA` int(11) NOT NULL,
   `DETALLE` text NOT NULL,
@@ -208,7 +193,6 @@ CREATE TABLE `gestion_espera` (
 -- Estructura de tabla para la tabla `incidente`
 --
 
-DROP TABLE IF EXISTS `incidente`;
 CREATE TABLE `incidente` (
   `ID_INCIDENTE` int(11) NOT NULL,
   `DETALLE` text NOT NULL,
@@ -222,12 +206,20 @@ CREATE TABLE `incidente` (
 -- Estructura de tabla para la tabla `inscripcion_evento`
 --
 
-DROP TABLE IF EXISTS `inscripcion_evento`;
 CREATE TABLE `inscripcion_evento` (
   `ID_RESERVA` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL,
   `FECHA_INSCRIPCION` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `inscripcion_evento`
+--
+
+INSERT INTO `inscripcion_evento` (`ID_RESERVA`, `ID_USUARIO`, `FECHA_INSCRIPCION`) VALUES
+(8, 5, '2025-10-29 18:06:24'),
+(9, 5, '2025-10-29 18:06:22'),
+(11, 5, '2025-12-12 11:21:47');
 
 -- --------------------------------------------------------
 
@@ -235,7 +227,6 @@ CREATE TABLE `inscripcion_evento` (
 -- Estructura de tabla para la tabla `instrumental`
 --
 
-DROP TABLE IF EXISTS `instrumental`;
 CREATE TABLE `instrumental` (
   `ID_INSTRUMENTAL` int(11) NOT NULL,
   `NOMBRE` varchar(50) NOT NULL,
@@ -248,7 +239,6 @@ CREATE TABLE `instrumental` (
 -- Estructura de tabla para la tabla `paquete`
 --
 
-DROP TABLE IF EXISTS `paquete`;
 CREATE TABLE `paquete` (
   `id` int(11) NOT NULL,
   `residente_id` int(11) DEFAULT NULL,
@@ -266,13 +256,19 @@ CREATE TABLE `paquete` (
   `observaciones` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `paquete`
+--
+
+INSERT INTO `paquete` (`id`, `residente_id`, `torre`, `apartamento`, `descripcion`, `remitente`, `numero_seguimiento`, `fecha_ingreso`, `fecha_notificacion`, `fecha_entrega`, `estado`, `notificado_correo`, `notificado_whatsapp`, `observaciones`) VALUES
+(1, 9, '5', '201', 'Caja verde', 'asda', '1002', '2025-10-29 22:13:38', '2025-10-29 22:13:45', NULL, 'notificado', 1, 0, 'sada');
+
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `parqueadero`
 --
 
-DROP TABLE IF EXISTS `parqueadero`;
 CREATE TABLE `parqueadero` (
   `ID_PARQUEADERO` int(11) NOT NULL,
   `CLASIFICACION` enum('CARRO','MOTO','BICICLETA') NOT NULL
@@ -284,7 +280,6 @@ CREATE TABLE `parqueadero` (
 -- Estructura de tabla para la tabla `prestamo`
 --
 
-DROP TABLE IF EXISTS `prestamo`;
 CREATE TABLE `prestamo` (
   `ID_PRESTAMO` int(11) NOT NULL,
   `FECHA_PRESTAMO` date NOT NULL,
@@ -297,7 +292,6 @@ CREATE TABLE `prestamo` (
 -- Estructura de tabla para la tabla `prestamo_parqueadero`
 --
 
-DROP TABLE IF EXISTS `prestamo_parqueadero`;
 CREATE TABLE `prestamo_parqueadero` (
   `ID_PRESTAMO` int(11) NOT NULL,
   `VEHICULO` varchar(50) NOT NULL,
@@ -312,7 +306,6 @@ CREATE TABLE `prestamo_parqueadero` (
 -- Estructura de tabla para la tabla `recibo`
 --
 
-DROP TABLE IF EXISTS `recibo`;
 CREATE TABLE `recibo` (
   `ID_RECIBO` int(11) NOT NULL,
   `MONTO` float NOT NULL,
@@ -327,7 +320,6 @@ CREATE TABLE `recibo` (
 -- Estructura de tabla para la tabla `recordatorio_evento`
 --
 
-DROP TABLE IF EXISTS `recordatorio_evento`;
 CREATE TABLE `recordatorio_evento` (
   `ID_RECORDATORIO` int(11) NOT NULL,
   `ID_RESERVA` int(11) NOT NULL,
@@ -342,7 +334,6 @@ CREATE TABLE `recordatorio_evento` (
 -- Estructura de tabla para la tabla `reporte`
 --
 
-DROP TABLE IF EXISTS `reporte`;
 CREATE TABLE `reporte` (
   `ID_REPORTE` int(11) NOT NULL,
   `TITULO` varchar(100) NOT NULL,
@@ -357,7 +348,6 @@ CREATE TABLE `reporte` (
 -- Estructura de tabla para la tabla `reserva`
 --
 
-DROP TABLE IF EXISTS `reserva`;
 CREATE TABLE `reserva` (
   `ID_RESERVA` int(11) NOT NULL,
   `ID_USUARIO` int(11) NOT NULL,
@@ -370,13 +360,22 @@ CREATE TABLE `reserva` (
   `CLASE` enum('FRECUENTE','RECURRENTE') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `reserva`
+--
+
+INSERT INTO `reserva` (`ID_RESERVA`, `ID_USUARIO`, `NOMBRE`, `DESCRIPCION`, `FECHA_HORA`, `COMENTARIO`, `ESTADO`, `TIPO`, `CLASE`) VALUES
+(8, 1, 'Evento 1', 'sdad', '2025-11-01 21:12:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE'),
+(9, 1, 'Evento 2', 'sa das', '2025-11-11 11:11:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE'),
+(10, 2, 'Adriana', 'lpklñk´ñlçkl´mk,lkmlñl-', '2025-11-27 07:01:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE'),
+(11, 1, 'Evento Prueba', 'SAFASF', '2025-12-14 11:11:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE');
+
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `sorteo`
 --
 
-DROP TABLE IF EXISTS `sorteo`;
 CREATE TABLE `sorteo` (
   `ID_SORTEO` int(11) NOT NULL,
   `FECHA` datetime NOT NULL DEFAULT current_timestamp(),
@@ -385,13 +384,21 @@ CREATE TABLE `sorteo` (
   `RESULTADO` enum('GANADOR','ESPERA') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `sorteo`
+--
+
+INSERT INTO `sorteo` (`ID_SORTEO`, `FECHA`, `TIPO`, `ID_USUARIO`, `RESULTADO`) VALUES
+(157, '2025-12-11 23:47:21', 'CARRO', 66, 'GANADOR'),
+(158, '2025-12-11 23:47:21', 'CARRO', 50, 'GANADOR'),
+(159, '2025-12-11 23:47:34', 'MOTO', 66, 'GANADOR');
+
 -- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `usuario`
 --
 
-DROP TABLE IF EXISTS `usuario`;
 CREATE TABLE `usuario` (
   `ID_USUARIO` int(11) NOT NULL,
   `NOMBRE` varchar(50) NOT NULL,
@@ -404,90 +411,6 @@ CREATE TABLE `usuario` (
   `ESTADO` enum('ACTIVO','INACTIVO','PENDIENTE') NOT NULL,
   `CONTRASENA` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `vehiculo`
---
-
-DROP TABLE IF EXISTS `vehiculo`;
-CREATE TABLE `vehiculo` (
-  `ID_VEHICULO` int(11) NOT NULL,
-  `ID_USUARIO` int(11) NOT NULL,
-  `TIPO` enum('CARRO','MOTO','BICICLETA') NOT NULL,
-  `PLACA` varchar(10) DEFAULT NULL,
-  `FECHA_FIN_SOAT` date DEFAULT NULL,
-  `DOC_SOAT` varchar(255) DEFAULT NULL,
-  `DOC_IDENTIDAD` varchar(255) DEFAULT NULL,
-  `DOC_TARJETA_PROPIEDAD` varchar(255) DEFAULT NULL,
-  `FECHA_REGISTRO` datetime DEFAULT current_timestamp(),
-  `ESTADO` enum('PENDIENTE','APROBADO','RECHAZADO') DEFAULT 'PENDIENTE'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `voluntariado`
---
-
-DROP TABLE IF EXISTS `voluntariado`;
-CREATE TABLE `voluntariado` (
-  `ID_VOLUNTARIADO` int(11) NOT NULL,
-  `NOMBRE` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `voluntario`
---
-
-DROP TABLE IF EXISTS `voluntario`;
-CREATE TABLE `voluntario` (
-  `ID_VOLUNTARIO` int(11) NOT NULL,
-  `NOMBRE` varchar(100) NOT NULL,
-  `ACTIVIDAD` varchar(100) NOT NULL,
-  `DISPONIBILIDAD` varchar(50) NOT NULL,
-  `CONTACTO` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para las tablas
---
-
---
--- Volcado de datos para la tabla `inscripcion_evento`
---
-
-INSERT INTO `inscripcion_evento` (`ID_RESERVA`, `ID_USUARIO`, `FECHA_INSCRIPCION`) VALUES
-(8, 5, '2025-10-29 18:06:24'),
-(9, 5, '2025-10-29 18:06:22');
-
---
--- Volcado de datos para la tabla `paquete`
---
-
-INSERT INTO `paquete` (`id`, `residente_id`, `torre`, `apartamento`, `descripcion`, `remitente`, `numero_seguimiento`, `fecha_ingreso`, `fecha_notificacion`, `fecha_entrega`, `estado`, `notificado_correo`, `notificado_whatsapp`, `observaciones`) VALUES
-(1, 9, '5', '201', 'Caja verde', 'asda', '1002', '2025-10-29 22:13:38', '2025-10-29 22:13:45', NULL, 'notificado', 1, 0, 'sada');
-
---
--- Volcado de datos para la tabla `reserva`
---
-
-INSERT INTO `reserva` (`ID_RESERVA`, `ID_USUARIO`, `NOMBRE`, `DESCRIPCION`, `FECHA_HORA`, `COMENTARIO`, `ESTADO`, `TIPO`, `CLASE`) VALUES
-(8, 1, 'Evento 1', 'sdad', '2025-11-01 21:12:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE'),
-(9, 1, 'Evento 2', 'sa das', '2025-11-11 11:11:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE'),
-(10, 2, 'Adriana', 'lpklñk´ñlçkl´mk,lkmlñl-', '2025-11-27 07:01:00', NULL, 'ACTIVO', 'PUBLICO', 'FRECUENTE');
-
---
--- Volcado de datos para la tabla `sorteo`
---
-
-INSERT INTO `sorteo` (`ID_SORTEO`, `FECHA`, `TIPO`, `ID_USUARIO`, `RESULTADO`) VALUES
-(157, '2025-12-11 23:47:21', 'CARRO', 66, 'GANADOR'),
-(158, '2025-12-11 23:47:21', 'CARRO', 50, 'GANADOR'),
-(159, '2025-12-11 23:47:34', 'MOTO', 66, 'GANADOR');
 
 --
 -- Volcado de datos para la tabla `usuario`
@@ -530,7 +453,27 @@ INSERT INTO `usuario` (`ID_USUARIO`, `NOMBRE`, `APELLIDO`, `CORREO`, `TELEFONO`,
 (76, 'Felipe', 'Córdoba', 'felipe.cordoba@email.com', '3001111137', '3', '307', 'RESIDENTE', 'ACTIVO', 'pbkdf2:sha256:600000$default$default_hash'),
 (77, 'Natalia', 'Herrera', 'natalia.herrera@email.com', '3001111138', '3', '308', 'RESIDENTE', 'ACTIVO', 'pbkdf2:sha256:600000$default$default_hash'),
 (78, 'Mauricio', 'Aguilar', 'mauricio.aguilar@email.com', '3001111139', '3', '309', 'RESIDENTE', 'ACTIVO', 'pbkdf2:sha256:600000$default$default_hash'),
-(79, 'Claudia', 'Paredes', 'claudia.paredes@email.com', '3001111140', '3', '310', 'RESIDENTE', 'ACTIVO', 'pbkdf2:sha256:600000$default$default_hash');
+(79, 'Claudia', 'Paredes', 'claudia.paredes@email.com', '3001111140', '3', '310', 'RESIDENTE', 'ACTIVO', 'pbkdf2:sha256:600000$default$default_hash'),
+(80, 'Uldarico', 'Andrade', 'uldandra@gmail.com', '3144902872', NULL, NULL, 'ADMINISTRADOR', 'ACTIVO', 'scrypt:32768:8:1$kL7gZeOSlUVEkWTX$ff3cff28a9a76d1f42d7f51de0ba30654f28c852bb8d190f55ef22413d383d56b4ea303a322c1cfccba21ab456c5cf6696f271809322f3450eb5a749fabcbd57');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `vehiculo`
+--
+
+CREATE TABLE `vehiculo` (
+  `ID_VEHICULO` int(11) NOT NULL,
+  `ID_USUARIO` int(11) NOT NULL,
+  `TIPO` enum('CARRO','MOTO','BICICLETA') NOT NULL,
+  `PLACA` varchar(10) DEFAULT NULL,
+  `FECHA_FIN_SOAT` date DEFAULT NULL,
+  `DOC_SOAT` varchar(255) DEFAULT NULL,
+  `DOC_IDENTIDAD` varchar(255) DEFAULT NULL,
+  `DOC_TARJETA_PROPIEDAD` varchar(255) DEFAULT NULL,
+  `FECHA_REGISTRO` datetime DEFAULT current_timestamp(),
+  `ESTADO` enum('PENDIENTE','APROBADO','RECHAZADO') DEFAULT 'PENDIENTE'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `vehiculo`
@@ -538,8 +481,32 @@ INSERT INTO `usuario` (`ID_USUARIO`, `NOMBRE`, `APELLIDO`, `CORREO`, `TELEFONO`,
 
 INSERT INTO `vehiculo` (`ID_VEHICULO`, `ID_USUARIO`, `TIPO`, `PLACA`, `FECHA_FIN_SOAT`, `DOC_SOAT`, `DOC_IDENTIDAD`, `DOC_TARJETA_PROPIEDAD`, `FECHA_REGISTRO`, `ESTADO`) VALUES
 (1, 50, 'CARRO', 'NET817', NULL, 'NET817_soat_20251119_215544.pdf', 'NET817_identidad_20251119_215544.pdf', 'NET817_tarjeta_propiedad_20251119_215544.pdf', '2025-11-19 21:55:44', 'APROBADO'),
-(2, 66, 'CARRO', 'NET342', NULL, 'NET342_soat_20251120_082357.pdf', 'NET342_identidad_20251120_082357.pdf', 'NET342_tarjeta_propiedad_20251120_082357.pdf', '2025-11-20 08:23:57', 'APROBADO'),
-(3, 66, 'MOTO', '21321W', NULL, '21321W_soat_20251120_082424.pdf', '21321W_identidad_20251120_082424.pdf', '21321W_tarjeta_propiedad_20251120_082424.pdf', '2025-11-20 08:24:24', 'APROBADO');
+(2, 66, 'CARRO', 'NET342', NULL, 'NET342_soat_20251120_082357.pdf', 'NET342_identidad_20251120_082357.pdf', 'NET342_tarjeta_propiedad_20251120_082357.pdf', '2025-11-20 08:23:57', 'APROBADO');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `voluntariado`
+--
+
+CREATE TABLE `voluntariado` (
+  `ID_VOLUNTARIADO` int(11) NOT NULL,
+  `NOMBRE` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `voluntario`
+--
+
+CREATE TABLE `voluntario` (
+  `ID_VOLUNTARIO` int(11) NOT NULL,
+  `NOMBRE` varchar(100) NOT NULL,
+  `ACTIVIDAD` varchar(100) NOT NULL,
+  `DISPONIBILIDAD` varchar(50) NOT NULL,
+  `CONTACTO` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Índices para tablas volcadas
@@ -809,7 +776,7 @@ ALTER TABLE `reporte`
 -- AUTO_INCREMENT de la tabla `reserva`
 --
 ALTER TABLE `reserva`
-  MODIFY `ID_RESERVA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `ID_RESERVA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT de la tabla `sorteo`
@@ -821,7 +788,7 @@ ALTER TABLE `sorteo`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `ID_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=80;
+  MODIFY `ID_USUARIO` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
 
 --
 -- AUTO_INCREMENT de la tabla `vehiculo`
